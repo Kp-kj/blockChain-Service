@@ -25,9 +25,6 @@ type Bargain struct {
 	ActivityEndTime time.Time `gorm:"type:datetime;not null" json:"activityEndTime"`
 }
 
-// 是否第一次参与活动(获取user状态)
-//IsFirstParticipate bool `gorm:"not null;index:idx_first_participate" json:"isFirstParticipate"`
-
 // BargainAmount 金额计算
 type BargainAmount struct {
 	gorm.Model
