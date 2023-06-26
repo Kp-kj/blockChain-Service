@@ -5,7 +5,6 @@ import "time"
 // Wallet 钱包结构体
 type Wallet struct {
 	gorm.Model
-
 	WalletID           int64   `gorm:"primaryKey;type:bigint;not null" json:"walletId"`      // 钱包ID
 	UserID             int64   `gorm:"type:bigint;not null;index:idx_user_id" json:"userId"` // 用户ID
 	HoldingQuantity    float32 `gorm:"type:float;not null" json:"holdingQuantity"`           // 持仓数量
