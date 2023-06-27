@@ -6,7 +6,7 @@ package server
 import (
 	"context"
 
-	"block/block/block"
+	"block/block"
 	"block/internal/logic"
 	"block/internal/svc"
 )

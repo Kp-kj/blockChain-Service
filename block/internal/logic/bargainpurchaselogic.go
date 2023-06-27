@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"block/block/block"
+	"block/block"
 	"block/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"

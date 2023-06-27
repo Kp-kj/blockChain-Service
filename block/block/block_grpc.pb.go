@@ -19,7 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Block_Ping_FullMethodName = "/block.Block/Ping"
+	Block_Ping_FullMethodName               = "/block.Block/Ping"
+	Block_GetGoodsList_FullMethodName       = "/block.Block/GetGoodsList"
+	Block_JudgeBargain_FullMethodName       = "/block.Block/JudgeBargain"
+	Block_FullPurchase_FullMethodName       = "/block.Block/FullPurchase"
+	Block_BargainPurchase_FullMethodName    = "/block.Block/BargainPurchase"
+	Block_GetBargainRule_FullMethodName     = "/block.Block/GetBargainRule"
+	Block_GetBargainGood_FullMethodName     = "/block.Block/GetBargainGood"
+	Block_GetBargainProgress_FullMethodName = "/block.Block/GetBargainProgress"
+	Block_GetBargainRecord_FullMethodName   = "/block.Block/GetBargainRecord"
 )
 
 // BlockClient is the client API for Block service.
@@ -27,6 +35,14 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlockClient interface {
 	Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error)
+	JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error)
+	FullPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*FullPurchaseResponse, error)
+	BargainPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*BargainPurchaseResponse, error)
+	GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error)
+	GetBargainGood(ctx context.Context, in *GetBargainGoodRequest, opts ...grpc.CallOption) (*GetBargainGoodResponse, error)
+	GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error)
+	GetBargainRecord(ctx context.Context, in *GetBargainRecordRequest, opts ...grpc.CallOption) (*GetBargainRecordResponse, error)
 }
 
 type blockClient struct {
@@ -46,11 +62,91 @@ func (c *blockClient) Ping(ctx context.Context, in *Request, opts ...grpc.CallOp
 	return out, nil
 }
 
+func (c *blockClient) GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error) {
+	out := new(GetGoodsListResponse)
+	err := c.cc.Invoke(ctx, Block_GetGoodsList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error) {
+	out := new(JudgeBargainResponse)
+	err := c.cc.Invoke(ctx, Block_JudgeBargain_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) FullPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*FullPurchaseResponse, error) {
+	out := new(FullPurchaseResponse)
+	err := c.cc.Invoke(ctx, Block_FullPurchase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) BargainPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*BargainPurchaseResponse, error) {
+	out := new(BargainPurchaseResponse)
+	err := c.cc.Invoke(ctx, Block_BargainPurchase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error) {
+	out := new(GetBargainRuleResponse)
+	err := c.cc.Invoke(ctx, Block_GetBargainRule_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) GetBargainGood(ctx context.Context, in *GetBargainGoodRequest, opts ...grpc.CallOption) (*GetBargainGoodResponse, error) {
+	out := new(GetBargainGoodResponse)
+	err := c.cc.Invoke(ctx, Block_GetBargainGood_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error) {
+	out := new(GetBargainProgressResponse)
+	err := c.cc.Invoke(ctx, Block_GetBargainProgress_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) GetBargainRecord(ctx context.Context, in *GetBargainRecordRequest, opts ...grpc.CallOption) (*GetBargainRecordResponse, error) {
+	out := new(GetBargainRecordResponse)
+	err := c.cc.Invoke(ctx, Block_GetBargainRecord_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BlockServer is the server API for Block service.
 // All implementations must embed UnimplementedBlockServer
 // for forward compatibility
 type BlockServer interface {
 	Ping(context.Context, *Request) (*Response, error)
+	GetGoodsList(context.Context, *GetGoodsListRequest) (*GetGoodsListResponse, error)
+	JudgeBargain(context.Context, *JudgeBargainRequest) (*JudgeBargainResponse, error)
+	FullPurchase(context.Context, *PurchaseRequest) (*FullPurchaseResponse, error)
+	BargainPurchase(context.Context, *PurchaseRequest) (*BargainPurchaseResponse, error)
+	GetBargainRule(context.Context, *GetBargainRuleRequest) (*GetBargainRuleResponse, error)
+	GetBargainGood(context.Context, *GetBargainGoodRequest) (*GetBargainGoodResponse, error)
+	GetBargainProgress(context.Context, *GetBargainProgressRequest) (*GetBargainProgressResponse, error)
+	GetBargainRecord(context.Context, *GetBargainRecordRequest) (*GetBargainRecordResponse, error)
 	mustEmbedUnimplementedBlockServer()
 }
 
@@ -60,6 +156,30 @@ type UnimplementedBlockServer struct {
 
 func (UnimplementedBlockServer) Ping(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedBlockServer) GetGoodsList(context.Context, *GetGoodsListRequest) (*GetGoodsListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGoodsList not implemented")
+}
+func (UnimplementedBlockServer) JudgeBargain(context.Context, *JudgeBargainRequest) (*JudgeBargainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method JudgeBargain not implemented")
+}
+func (UnimplementedBlockServer) FullPurchase(context.Context, *PurchaseRequest) (*FullPurchaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FullPurchase not implemented")
+}
+func (UnimplementedBlockServer) BargainPurchase(context.Context, *PurchaseRequest) (*BargainPurchaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BargainPurchase not implemented")
+}
+func (UnimplementedBlockServer) GetBargainRule(context.Context, *GetBargainRuleRequest) (*GetBargainRuleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBargainRule not implemented")
+}
+func (UnimplementedBlockServer) GetBargainGood(context.Context, *GetBargainGoodRequest) (*GetBargainGoodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBargainGood not implemented")
+}
+func (UnimplementedBlockServer) GetBargainProgress(context.Context, *GetBargainProgressRequest) (*GetBargainProgressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBargainProgress not implemented")
+}
+func (UnimplementedBlockServer) GetBargainRecord(context.Context, *GetBargainRecordRequest) (*GetBargainRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBargainRecord not implemented")
 }
 func (UnimplementedBlockServer) mustEmbedUnimplementedBlockServer() {}
 
@@ -92,6 +212,150 @@ func _Block_Ping_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Block_GetGoodsList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGoodsListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetGoodsList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetGoodsList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetGoodsList(ctx, req.(*GetGoodsListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_JudgeBargain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JudgeBargainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).JudgeBargain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_JudgeBargain_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).JudgeBargain(ctx, req.(*JudgeBargainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_FullPurchase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PurchaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).FullPurchase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_FullPurchase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).FullPurchase(ctx, req.(*PurchaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_BargainPurchase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PurchaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).BargainPurchase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_BargainPurchase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).BargainPurchase(ctx, req.(*PurchaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_GetBargainRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBargainRuleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetBargainRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetBargainRule_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetBargainRule(ctx, req.(*GetBargainRuleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_GetBargainGood_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBargainGoodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetBargainGood(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetBargainGood_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetBargainGood(ctx, req.(*GetBargainGoodRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_GetBargainProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBargainProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetBargainProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetBargainProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetBargainProgress(ctx, req.(*GetBargainProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_GetBargainRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBargainRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetBargainRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetBargainRecord_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetBargainRecord(ctx, req.(*GetBargainRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Block_ServiceDesc is the grpc.ServiceDesc for Block service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +366,38 @@ var Block_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _Block_Ping_Handler,
+		},
+		{
+			MethodName: "GetGoodsList",
+			Handler:    _Block_GetGoodsList_Handler,
+		},
+		{
+			MethodName: "JudgeBargain",
+			Handler:    _Block_JudgeBargain_Handler,
+		},
+		{
+			MethodName: "FullPurchase",
+			Handler:    _Block_FullPurchase_Handler,
+		},
+		{
+			MethodName: "BargainPurchase",
+			Handler:    _Block_BargainPurchase_Handler,
+		},
+		{
+			MethodName: "GetBargainRule",
+			Handler:    _Block_GetBargainRule_Handler,
+		},
+		{
+			MethodName: "GetBargainGood",
+			Handler:    _Block_GetBargainGood_Handler,
+		},
+		{
+			MethodName: "GetBargainProgress",
+			Handler:    _Block_GetBargainProgress_Handler,
+		},
+		{
+			MethodName: "GetBargainRecord",
+			Handler:    _Block_GetBargainRecord_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
