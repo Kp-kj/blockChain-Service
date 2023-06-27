@@ -27,6 +27,11 @@ func (s *BlockServer) Ping(ctx context.Context, in *block.Request) (*block.Respo
 	return l.Ping(in)
 }
 
+func (s *BlockServer) CreateGoodsList(ctx context.Context, in *block.CreateGoodsListRequest) (*block.CreateGoodsListResponse, error) {
+	l := logic.NewCreateGoodsListLogic(ctx, s.svcCtx)
+	return l.CreateGoodsList(in)
+}
+
 func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
 	l := logic.NewGetGoodsListLogic(ctx, s.svcCtx)
 	return l.GetGoodsList(in)

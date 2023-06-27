@@ -15,6 +15,8 @@ import (
 type (
 	BargainAmount              = block.BargainAmount
 	BargainPurchaseResponse    = block.BargainPurchaseResponse
+	CreateGoodsListRequest     = block.CreateGoodsListRequest
+	CreateGoodsListResponse    = block.CreateGoodsListResponse
 	FullPurchaseResponse       = block.FullPurchaseResponse
 	GetBargainGoodRequest      = block.GetBargainGoodRequest
 	GetBargainGoodResponse     = block.GetBargainGoodResponse
@@ -36,6 +38,7 @@ type (
 
 	Block interface {
 		Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+		CreateGoodsList(ctx context.Context, in *CreateGoodsListRequest, opts ...grpc.CallOption) (*CreateGoodsListResponse, error)
 		GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error)
 		JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error)
 		FullPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*FullPurchaseResponse, error)
@@ -60,6 +63,11 @@ func NewBlock(cli zrpc.Client) Block {
 func (m *defaultBlock) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	client := block.NewBlockClient(m.cli.Conn())
 	return client.Ping(ctx, in, opts...)
+}
+
+func (m *defaultBlock) CreateGoodsList(ctx context.Context, in *CreateGoodsListRequest, opts ...grpc.CallOption) (*CreateGoodsListResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.CreateGoodsList(ctx, in, opts...)
 }
 
 func (m *defaultBlock) GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error) {

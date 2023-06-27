@@ -11,6 +11,21 @@ message Response {
   string pong = 1;
 }
 
+// 管理系统创建商品
+message  CreateGoodsListRequest{
+  int64  user_id = 1;
+  string goodName = 2;    // 道具名称
+  string goodPicture = 3; // 道具图片
+  string goodDescribe =4; // 道具描述
+  int64  goodPrice =5;    // 道具价格
+  string currencyType =6; // 支付货币种类 0：ADF 1：U
+}
+
+// 管理系统创建商品
+message  CreateGoodsListResponse{
+  bool is_success = 1;    // 创建成功
+}
+
 // 获取商城道具列表
 message  GetGoodsListRequest{
   int64  user_id = 1;
@@ -122,7 +137,8 @@ message Profile {
 //商城区
 service Block {
   rpc Ping(Request) returns(Response);
-  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse);
+  rpc CreateGoodsList(CreateGoodsListRequest) returns(CreateGoodsListResponse); // 管理系统添加商品
+  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse); // 获取商品列表
   rpc JudgeBargain(JudgeBargainRequest) returns(JudgeBargainResponse);
   rpc FullPurchase(PurchaseRequest) returns(FullPurchaseResponse);
   rpc BargainPurchase(PurchaseRequest) returns(BargainPurchaseResponse);
@@ -131,6 +147,9 @@ service Block {
   rpc GetBargainProgress(GetBargainProgressRequest) returns(GetBargainProgressResponse);
   rpc GetBargainRecord(GetBargainRecordRequest) returns(GetBargainRecordResponse);
 }
+
+
+
 
 
 

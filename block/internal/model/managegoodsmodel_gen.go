@@ -26,6 +26,7 @@ type (
 	manageGoodsModel interface {
 		Insert(ctx context.Context, data *ManageGoods) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*ManageGoods, error)
+		FindOneByAdminName(ctx context.Context, GoodName string) (*ManageGoods, error)
 		Update(ctx context.Context, data *ManageGoods) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -66,6 +67,20 @@ func (m *defaultManageGoodsModel) FindOne(ctx context.Context, id int64) (*Manag
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", manageGoodsRows, m.table)
 	var resp ManageGoods
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultManageGoodsModel) FindOneByGoodName(ctx context.Context, goodName int64) (*ManageGoods, error) {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", manageGoodsRows, m.table)
+	var resp ManageGoods
+	err := m.conn.QueryRowCtx(ctx, &resp, query, goodName)
 	switch err {
 	case nil:
 		return &resp, nil
