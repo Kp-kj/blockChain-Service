@@ -6,7 +6,7 @@ package server
 import (
 	"context"
 
-	"block/block/block"
+	"block/block"
 	"block/internal/logic"
 	"block/internal/svc"
 )
@@ -25,6 +25,11 @@ func NewBlockServer(svcCtx *svc.ServiceContext) *BlockServer {
 func (s *BlockServer) Ping(ctx context.Context, in *block.Request) (*block.Response, error) {
 	l := logic.NewPingLogic(ctx, s.svcCtx)
 	return l.Ping(in)
+}
+
+func (s *BlockServer) CreateGoodsList(ctx context.Context, in *block.CreateGoodsListRequest) (*block.CreateGoodsListResponse, error) {
+	l := logic.NewCreateGoodsListLogic(ctx, s.svcCtx)
+	return l.CreateGoodsList(in)
 }
 
 func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {

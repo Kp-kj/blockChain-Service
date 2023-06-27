@@ -13,11 +13,40 @@ import (
 )
 
 type (
-	Request  = block.Request
-	Response = block.Response
+	BargainAmount              = block.BargainAmount
+	BargainPurchaseResponse    = block.BargainPurchaseResponse
+	CreateGoodsListRequest     = block.CreateGoodsListRequest
+	CreateGoodsListResponse    = block.CreateGoodsListResponse
+	FullPurchaseResponse       = block.FullPurchaseResponse
+	GetBargainGoodRequest      = block.GetBargainGoodRequest
+	GetBargainGoodResponse     = block.GetBargainGoodResponse
+	GetBargainProgressRequest  = block.GetBargainProgressRequest
+	GetBargainProgressResponse = block.GetBargainProgressResponse
+	GetBargainRecordRequest    = block.GetBargainRecordRequest
+	GetBargainRecordResponse   = block.GetBargainRecordResponse
+	GetBargainRuleRequest      = block.GetBargainRuleRequest
+	GetBargainRuleResponse     = block.GetBargainRuleResponse
+	GetGoodsListRequest        = block.GetGoodsListRequest
+	GetGoodsListResponse       = block.GetGoodsListResponse
+	Good                       = block.Good
+	JudgeBargainRequest        = block.JudgeBargainRequest
+	JudgeBargainResponse       = block.JudgeBargainResponse
+	Profile                    = block.Profile
+	PurchaseRequest            = block.PurchaseRequest
+	Request                    = block.Request
+	Response                   = block.Response
 
 	Block interface {
 		Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+		CreateGoodsList(ctx context.Context, in *CreateGoodsListRequest, opts ...grpc.CallOption) (*CreateGoodsListResponse, error)
+		GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error)
+		JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error)
+		FullPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*FullPurchaseResponse, error)
+		BargainPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*BargainPurchaseResponse, error)
+		GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error)
+		GetBargainGood(ctx context.Context, in *GetBargainGoodRequest, opts ...grpc.CallOption) (*GetBargainGoodResponse, error)
+		GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error)
+		GetBargainRecord(ctx context.Context, in *GetBargainRecordRequest, opts ...grpc.CallOption) (*GetBargainRecordResponse, error)
 	}
 
 	defaultBlock struct {
@@ -34,4 +63,49 @@ func NewBlock(cli zrpc.Client) Block {
 func (m *defaultBlock) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	client := block.NewBlockClient(m.cli.Conn())
 	return client.Ping(ctx, in, opts...)
+}
+
+func (m *defaultBlock) CreateGoodsList(ctx context.Context, in *CreateGoodsListRequest, opts ...grpc.CallOption) (*CreateGoodsListResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.CreateGoodsList(ctx, in, opts...)
+}
+
+func (m *defaultBlock) GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.GetGoodsList(ctx, in, opts...)
+}
+
+func (m *defaultBlock) JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.JudgeBargain(ctx, in, opts...)
+}
+
+func (m *defaultBlock) FullPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*FullPurchaseResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.FullPurchase(ctx, in, opts...)
+}
+
+func (m *defaultBlock) BargainPurchase(ctx context.Context, in *PurchaseRequest, opts ...grpc.CallOption) (*BargainPurchaseResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.BargainPurchase(ctx, in, opts...)
+}
+
+func (m *defaultBlock) GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.GetBargainRule(ctx, in, opts...)
+}
+
+func (m *defaultBlock) GetBargainGood(ctx context.Context, in *GetBargainGoodRequest, opts ...grpc.CallOption) (*GetBargainGoodResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.GetBargainGood(ctx, in, opts...)
+}
+
+func (m *defaultBlock) GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.GetBargainProgress(ctx, in, opts...)
+}
+
+func (m *defaultBlock) GetBargainRecord(ctx context.Context, in *GetBargainRecordRequest, opts ...grpc.CallOption) (*GetBargainRecordResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.GetBargainRecord(ctx, in, opts...)
 }
