@@ -6,7 +6,7 @@ package server
 import (
 	"context"
 
-	"block/block"
+	"block/block/block"
 	"block/internal/logic"
 	"block/internal/svc"
 )
@@ -25,4 +25,44 @@ func NewBlockServer(svcCtx *svc.ServiceContext) *BlockServer {
 func (s *BlockServer) Ping(ctx context.Context, in *block.Request) (*block.Response, error) {
 	l := logic.NewPingLogic(ctx, s.svcCtx)
 	return l.Ping(in)
+}
+
+func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
+	l := logic.NewGetGoodsListLogic(ctx, s.svcCtx)
+	return l.GetGoodsList(in)
+}
+
+func (s *BlockServer) JudgeBargain(ctx context.Context, in *block.JudgeBargainRequest) (*block.JudgeBargainResponse, error) {
+	l := logic.NewJudgeBargainLogic(ctx, s.svcCtx)
+	return l.JudgeBargain(in)
+}
+
+func (s *BlockServer) FullPurchase(ctx context.Context, in *block.PurchaseRequest) (*block.FullPurchaseResponse, error) {
+	l := logic.NewFullPurchaseLogic(ctx, s.svcCtx)
+	return l.FullPurchase(in)
+}
+
+func (s *BlockServer) BargainPurchase(ctx context.Context, in *block.PurchaseRequest) (*block.BargainPurchaseResponse, error) {
+	l := logic.NewBargainPurchaseLogic(ctx, s.svcCtx)
+	return l.BargainPurchase(in)
+}
+
+func (s *BlockServer) GetBargainRule(ctx context.Context, in *block.GetBargainRuleRequest) (*block.GetBargainRuleResponse, error) {
+	l := logic.NewGetBargainRuleLogic(ctx, s.svcCtx)
+	return l.GetBargainRule(in)
+}
+
+func (s *BlockServer) GetBargainGood(ctx context.Context, in *block.GetBargainGoodRequest) (*block.GetBargainGoodResponse, error) {
+	l := logic.NewGetBargainGoodLogic(ctx, s.svcCtx)
+	return l.GetBargainGood(in)
+}
+
+func (s *BlockServer) GetBargainProgress(ctx context.Context, in *block.GetBargainProgressRequest) (*block.GetBargainProgressResponse, error) {
+	l := logic.NewGetBargainProgressLogic(ctx, s.svcCtx)
+	return l.GetBargainProgress(in)
+}
+
+func (s *BlockServer) GetBargainRecord(ctx context.Context, in *block.GetBargainRecordRequest) (*block.GetBargainRecordResponse, error) {
+	l := logic.NewGetBargainRecordLogic(ctx, s.svcCtx)
+	return l.GetBargainRecord(in)
 }

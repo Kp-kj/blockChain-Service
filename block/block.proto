@@ -11,6 +11,142 @@ message Response {
   string pong = 1;
 }
 
+// 获取商城道具列表
+message  GetGoodsListRequest{
+  int64  user_id = 1;
+}
+
+// 获取商城道具列表
+message  GetGoodsListResponse{
+  repeated Good Good = 1;
+}
+
+// 道具
+message Good {
+  int64  goodId = 1;      //ID
+  string goodName = 2;    //道具名称
+  string goodPicture = 3; // 道具图片
+  string goodDescribe =4; // 道具描述
+  int64  goodPrice =5;    // 道具价格
+  string currencyType =6; // 支付货币种类 0：ADF 1：U
+  string optionalStatus =7; // 道具状态 0：未购买 1：砍价中 2：待支付 3：工作中 4：已失效 5：已使用(能量水)
+  string purchaseTime =8; // 购买时间
+}
+
+// 判断是否可以砍价
+message  JudgeBargainRequest{
+  int64  user_id = 1;     // 用户id
+}
+
+// 判断是否可以砍价
+message  JudgeBargainResponse{
+  bool is_bargain = 1;    // 砍价id
+}
+
+// 购买
+message  PurchaseRequest{
+  int64  user_id = 1;     // 用户id
+  int64  mall_id = 2;     // 商城id
+  int64  good_id = 3;     // 商品id
+}
+
+// 全额购买
+message  FullPurchaseResponse{
+  bool is_success = 1;    // 购买成功
+}
+
+// 限时购买
+message  BargainPurchaseResponse{
+  int64 bargain_id = 1;   // 砍价id
+  bool is_first   = 2;    // 是否为第一次砍价
+}
+
+// 获取活动规则
+message  GetBargainRuleRequest{
+  int64 bargain_id = 1;   // 砍价id
+}
+
+// 获取活动规则
+message  GetBargainRuleResponse{
+  string bargainRuleDescribe =1; // 规则描述
+}
+
+// 获取砍价商品信息
+message  GetBargainGoodRequest{
+  int64 good_id = 1;      // 商品id
+}
+
+// 获取砍价商品信息
+message  GetBargainGoodResponse{
+  string goodName = 1;    //道具名称
+  string goodPicture = 2; // 道具图片
+}
+
+// 获取砍价进度
+message  GetBargainProgressRequest{
+  int64 bargain_id = 1;   // 砍价id
+}
+
+// 获取砍价进度
+message  GetBargainProgressResponse{
+  string activityStartTime = 1;    // 活动开始时间
+  float remainingPrice = 2;        // 剩余金额
+}
+
+// 获取砍价记录列表
+message  GetBargainRecordRequest{
+  int64 bargain_id = 1;   // 砍价id
+}
+
+// 获取砍价记录列表
+message  GetBargainRecordResponse{
+  repeated Good Good = 1; // 商品
+  repeated BargainAmount BargainAmount   = 2; // 每份金额计算
+  repeated Profile Profile   = 3;             // 对应金额的砍价人信息
+}
+
+// 金额计算
+message BargainAmount {
+  float firstBargainPercentage = 1; // 初次砍价百分比
+  float bargainMinPrice = 2;        // 砍价最小额度
+  float bargainPrice = 3;           // 本次砍价额度
+}
+
+// Profile 暂时从用户服务拿到
+message Profile {
+  int64 user_id = 1;       // 用户id
+  string userName = 2;     // 用户名
+  string avatar = 3;       // 用户头像
+}
+
+//商城区
 service Block {
   rpc Ping(Request) returns(Response);
+  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse);
+  rpc JudgeBargain(JudgeBargainRequest) returns(JudgeBargainResponse);
+  rpc FullPurchase(PurchaseRequest) returns(FullPurchaseResponse);
+  rpc BargainPurchase(PurchaseRequest) returns(BargainPurchaseResponse);
+  rpc GetBargainRule(GetBargainRuleRequest) returns(GetBargainRuleResponse);
+  rpc GetBargainGood(GetBargainGoodRequest) returns(GetBargainGoodResponse);
+  rpc GetBargainProgress(GetBargainProgressRequest) returns(GetBargainProgressResponse);
+  rpc GetBargainRecord(GetBargainRecordRequest) returns(GetBargainRecordResponse);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
