@@ -15,8 +15,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 COPY ./etc /app/etc
-RUN go get github.com/zeromicro/go-zero/core/stores/sqlx@v1.5.2
-RUN go build -ldflags="-s -w" -o /app/block .
+RUN go build -ldflags="-s -w" -o /app/block block.go
 
 
 FROM scratch
