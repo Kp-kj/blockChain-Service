@@ -15,7 +15,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 COPY ./etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/block .
+RUN go build -ldflags="-s -w" -o /app/block
 
 
 FROM scratch
