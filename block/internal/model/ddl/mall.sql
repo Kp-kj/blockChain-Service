@@ -1,106 +1,48 @@
 
--- 创建 ManageCryptominer 管理系统矿机表
-CREATE TABLE `manage_cryptominer` (
-     `cryptominer_typeid` bigint(20) NOT NULL,        -- 矿机种类 根据管理系统生成的金银矿机种类（雪花算法）分类
+-- 创建 ManageGoods 管理系统控制商品表
+CREATE TABLE `manage_goods` (
+     `id` bigint(0) UNSIGNED NOT NULL AUTO_INCREMENT,
      `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
      `updated_at` datetime DEFAULT NULL,
      `deleted_at` datetime DEFAULT NULL,
-     `adminuser_id` bigint(20) NOT NULL,
-     `cryptominer_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-     `cryptominer_picture` VARCHAR(256) NULL DEFAULT NULL ,
-     `cryptominer_describe` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-     `cryptominer_price` int NOT NULL,
-     `cryptominer_duration` bigint(20) NOT NULL,       -- 矿机持续运作时间 中途加能量水可变多
-     PRIMARY KEY (`cryptominer_typeid`)
+     `user_id` bigint(20) NOT NULL,
+     `good_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+     `good_picture` VARCHAR(256) NULL DEFAULT NULL ,
+     `good_describe` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+     `good_price` int NULL DEFAULT NULL,
+     `currency_type` varchar(256) NOT NULL,     -- 支付货币种类 0：ADF 1：U
+     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 创建 ManageProp 管理系统道具表
-CREATE TABLE `manage_prop` (
-        `prop_typeid` bigint(20) NOT NULL,         -- 道具种类 根据管理系统生成的道具种类（雪花算法）分类，目前只有能量水
-        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` datetime DEFAULT NULL,
-        `deleted_at` datetime DEFAULT NULL,
-        `adminuser_id` bigint(20) NOT NULL,
-        `prop_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-        `prop_picture` VARCHAR(256) NULL DEFAULT NULL ,
-        `prop_describe` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-        `prop_price` int NOT NULL,
-        PRIMARY KEY (`prop_typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 Cryptominer 矿机表
-CREATE TABLE `cryptominer` (
-     `cryptominer_id` bigint(20) NOT NULL,
+-- 创建 Good 商品表
+CREATE TABLE `goods` (
+     `good_id` bigint(20) NOT NULL,
      `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
      `updated_at` datetime DEFAULT NULL,
      `deleted_at` datetime DEFAULT NULL,
      `user_id` bigint(20) NULL DEFAULT NULL,
-     `cryptominer_typeid` bigint(20) NOT NULL,          -- 矿机种类 根据管理系统生成的金银矿机种类（雪花算法）分类
-     `cryptominer_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-     `cryptominer_picture` VARCHAR(256) NULL DEFAULT NULL,
-     `cryptominer_price` int NOT NULL,
-     `cryptominer_describe` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-     `is_bargain` tinyint(1) NOT NULL,                  -- 是否可砍，根据当天是否砍价决定
-     `purchase_way` varchar(256) NULL DEFAULT NULL,     -- 购买方式 0：全额购买 1：限时砍价
-     `purchase_time` datetime DEFAULT NULL,             -- 购买时间
-     `optional_status` varchar(256) NOT NULL,           -- 矿机状态 0：未购买 1：砍价中 2：待支付 3：工作中 4：已失效
-     `cryptominer_start_time` datetime DEFAULT NULL,    -- 矿机开始运作时间 -- 如果失效后激活，按照激活时间开始
-     `cryptominer_duration` bigint(20) NOT NULL,          -- 矿机持续运作时间 中途加能量水可变多
-     PRIMARY KEY (`cryptominer_id`),
-     UNIQUE KEY `idx_cryptominer_id` (`cryptominer_id`),
+     `good_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+     `good_picture` VARCHAR(256) NULL DEFAULT NULL,
+     `good_price` int NOT NULL,
+     `good_describe` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+     `good_type` varchar(256) NOT NULL,         -- 道具种类 0：黄金胡萝卜矿机 1：白银胡萝卜矿机 2：能量水
+     `currency_type` varchar(256) NOT NULL,     -- 支付货币种类 0：ADF 1：U
+     `is_bargain` tinyint(1) NOT NULL,          -- 是否可砍，矿机可砍(true)，能量水不可砍(false)
+     `purchase_way` varchar(256) NULL DEFAULT NULL,      -- 购买方式 0：全额购买 1：限时砍价
+     `purchase_time` datetime DEFAULT NULL,
+     `optional_status` varchar(256) NOT NULL,   -- 道具状态 0：未购买 1：砍价中 2：待支付 3：工作中 4：已失效 5：已使用(能量水)
+     `good_start_time` datetime DEFAULT NULL,   -- 道具开始运作时间 -- 如果失效后激活，按照激活时间开始
+     PRIMARY KEY (`good_id`),
+     UNIQUE KEY `idx_goods_good_id` (`good_id`),
      INDEX `idx_user_id` (`user_id`),
-     INDEX `idx_cryptominer_price` (`cryptominer_price`),
-     INDEX `idx_cryptominer_type` (`cryptominer_type`),
+     INDEX `idx_good_price` (`good_price`),
+     INDEX `idx_good_type` (`good_type`),
+     INDEX `idx_currency_type` (`currency_type`),
      INDEX `idx_purchase_way` (`purchase_way`),
      INDEX `idx_optional_status` (`optional_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 创建 Prop 道具表
-CREATE TABLE `prop` (
-     `prop_id` bigint(20) NOT NULL,
-     `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-     `updated_at` datetime DEFAULT NULL,
-     `deleted_at` datetime DEFAULT NULL,
-     `user_id` bigint(20) NULL DEFAULT NULL,
-     `prop_typeid` bigint(20) NOT NULL,                 -- 道具种类 根据管理系统生成的道具种类（雪花算法）分类，目前只有能量水
-     `prop_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-     `prop_picture` VARCHAR(256) NULL DEFAULT NULL,
-     `prop_price` int NOT NULL,
-     `prop_describe` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-     `purchase_time` datetime DEFAULT NULL,
-     PRIMARY KEY (`prop_id`),
-     UNIQUE KEY `idx_prop_id` (`prop_id`),
-     INDEX `idx_user_id` (`user_id`),
-     INDEX `idx_prop_type` (`prop_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 UserCryptominer 用户矿机表
-CREATE TABLE `user_cryptominer` (
-        `user_id` bigint(20) NULL DEFAULT NULL,
-        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` datetime DEFAULT NULL,
-        `deleted_at` datetime DEFAULT NULL,
-        `cryptominer_amount` int NOT NULL,
-        `cryptominer_typeid` bigint(20) NOT NULL,   -- 矿机种类 根据管理系统生成的金银矿机种类（雪花算法）分类
-        PRIMARY KEY (`user_id`),
-        UNIQUE KEY `idx_user_id` (`user_id`),
-        INDEX `idx_cryptominer_typeid` (`cryptominer_typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 UserProp 用户道具表
-CREATE TABLE `user_prop` (
-        `user_id` bigint(20) NULL DEFAULT NULL,
-        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` datetime DEFAULT NULL,
-        `deleted_at` datetime DEFAULT NULL,
-        `prop_amount` int NOT NULL,
-        `prop_typeid` bigint(20) NOT NULL,         -- 道具种类 根据管理系统生成的道具种类（雪花算法）分类，目前只有能量水
-        PRIMARY KEY (`user_id`),
-        UNIQUE KEY `idx_user_id` (`user_id`),
-        INDEX `idx_prop_typeid` (`prop_typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 PurchaseRecord 商品购买记录表
+-- 创建 PurchaseRecord 购买记录表
 CREATE TABLE `purchase_records` (
     `user_id` bigint(20) NOT NULL,
     `purchase_record_id` int NOT NULL,
@@ -126,25 +68,30 @@ CREATE TABLE `purchase_records` (
 -- 创建 bargain 砍价表
 CREATE TABLE `bargain` (
    `bargain_id` bigint(20) NOT NULL,
-   `cryptominer_id` bigint(20) NOT NULL,
-   `cryptominer_price` int NOT NULL,
+   `good_id` bigint(20) NOT NULL,
+   `good_price` int NOT NULL,
    `remaining_price` float NOT NULL,        -- 剩余金额
    `activity_start_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
    `activity_end_time` datetime NULL DEFAULT NULL,
-   PRIMARY KEY (`bargain_id`)
+   PRIMARY KEY (`bargain_id`),
+   INDEX `idx_good_price` (`good_price`),
+   INDEX `idx_bargain_percentage` (`remaining_price`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 创建 BargainAmount 砍价额度表
 CREATE TABLE `bargain_amount` (
       `bargain_id` bigint(20) NOT NULL,
+      `user_id` bigint(20) NOT NULL,
       `first_bargain_percentage` float NOT NULL,
       `bargain_min_price` float NOT NULL,
       `bargain_price` float NOT NULL,
-      PRIMARY KEY (`bargain_id`)
+      PRIMARY KEY (`bargain_id`),
+      INDEX `first_bargain_percentage` (`first_bargain_percentage`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 创建 wallet 钱包表
 CREATE TABLE `wallets` (
+--        `walletId` bigint(20) NOT NULL,
        `user_id` bigint(20) NOT NULL,
        `holding_quantity` float NOT NULL,
        `available_quantity` float NOT NULL,

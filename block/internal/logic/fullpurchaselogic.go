@@ -23,8 +23,8 @@ func NewFullPurchaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Full
 	}
 }
 
-func (l *FullPurchaseLogic) FullPurchase(in *block.PurchaseRequest) (*block.IsSuccessResponse, error) {
+func (l *FullPurchaseLogic) FullPurchase(in *block.PurchaseRequest) (*block.FullPurchaseResponse, error) {
 	// todo: add your logic here and delete this line
 
-	return &block.IsSuccessResponse{}, nil
+	return &block.FullPurchaseResponse{}, nil
 }

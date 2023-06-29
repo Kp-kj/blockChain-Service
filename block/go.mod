@@ -3,7 +3,6 @@ module block
 go 1.18
 
 require (
-	github.com/bwmarrin/snowflake v0.3.0
 	github.com/zeromicro/go-zero v1.5.3
 	google.golang.org/grpc v1.56.1
 	google.golang.org/protobuf v1.31.0
