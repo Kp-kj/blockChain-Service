@@ -29,6 +29,7 @@ type (
 		FindOneByPurchaseRecordId(ctx context.Context, purchaseRecordId int64) (*PurchaseRecords, error)
 		Update(ctx context.Context, data *PurchaseRecords) error
 		Delete(ctx context.Context, userId int64) error
+		FindBargainByUserId(ctx context.Context, UserId int64,CryptominerTypeid int64) (*PurchaseRecords, error)
 	}
 
 	defaultPurchaseRecordsModel struct {
@@ -48,7 +49,6 @@ type (
 		GoodQuantity     int64          `db:"good_quantity"`
 		PurchaseTime     time.Time      `db:"purchase_time"`
 		PurchasePrice    sql.NullInt64  `db:"purchase_price"`
-		CurrencyType     string         `db:"currency_type"`
 	}
 )
 
@@ -94,15 +94,30 @@ func (m *defaultPurchaseRecordsModel) FindOneByPurchaseRecordId(ctx context.Cont
 }
 
 func (m *defaultPurchaseRecordsModel) Insert(ctx context.Context, data *PurchaseRecords) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, purchaseRecordsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.PurchaseRecordId, data.DeletedAt, data.GoodName, data.GoodPicture, data.PurchaseWay, data.GoodQuantity, data.PurchaseTime, data.PurchasePrice, data.CurrencyType)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, purchaseRecordsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.PurchaseRecordId, data.DeletedAt, data.GoodName, data.GoodPicture, data.PurchaseWay, data.GoodQuantity, data.PurchaseTime, data.PurchasePrice)
 	return ret, err
 }
 
 func (m *defaultPurchaseRecordsModel) Update(ctx context.Context, newData *PurchaseRecords) error {
 	query := fmt.Sprintf("update %s set %s where `user_id` = ?", m.table, purchaseRecordsRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.PurchaseRecordId, newData.DeletedAt, newData.GoodName, newData.GoodPicture, newData.PurchaseWay, newData.GoodQuantity, newData.PurchaseTime, newData.PurchasePrice, newData.CurrencyType, newData.UserId)
+	_, err := m.conn.ExecCtx(ctx, query, newData.PurchaseRecordId, newData.DeletedAt, newData.GoodName, newData.GoodPicture, newData.PurchaseWay, newData.GoodQuantity, newData.PurchaseTime, newData.PurchasePrice, newData.UserId)
 	return err
+}
+
+func (m *defaultPurchaseRecordsModel) FindBargainByUserId(ctx context.Context, userId int64,cryptominerTypeid int64) (*PurchaseRecords, error) {
+	var resp PurchaseRecords
+	today := time.Now().Format("2006-01-02")
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `cryptominer_typeid` = ? and `purchase_way` = '1' and DATE(`purchase_time`) = ? limit 1", purchaseRecordsRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, cryptominerTypeid, today)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultPurchaseRecordsModel) tableName() string {

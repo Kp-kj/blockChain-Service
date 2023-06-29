@@ -24,7 +24,17 @@ func NewJudgeBargainLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Judg
 }
 
 func (l *JudgeBargainLogic) JudgeBargain(in *block.JudgeBargainRequest) (*block.JudgeBargainResponse, error) {
-	// todo: add your logic here and delete this line
 
-	return &block.JudgeBargainResponse{}, nil
+	// 查询购买记录，是否有今日砍价账单
+	_, err := l.svcCtx.PurchaseRecordsModel.FindBargainByUserId(l.ctx, in.UserId, in.CryptominerTypeid)
+	if err == nil {
+		// 查询到了数据，此种矿机今日不可砍
+		return &block.JudgeBargainResponse{
+			IsBargain: false,
+		}, nil
+	}
+	return &block.JudgeBargainResponse{
+		IsBargain: true,
+	}, nil
+
 }

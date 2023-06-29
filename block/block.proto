@@ -11,46 +11,75 @@ message Response {
   string pong = 1;
 }
 
-// 管理系统创建商品
-message  CreateGoodsListRequest{
-  int64  user_id = 1;
-  string goodName = 2;    // 道具名称
-  string goodPicture = 3; // 道具图片
-  string goodDescribe =4; // 道具描述
-  int64  goodPrice =5;    // 道具价格
-  string currencyType =6; // 支付货币种类 0：ADF 1：U
+// 管理系统创建矿机
+message  CreateCryptominerRequest{
+  int64  adminuser_id = 1;           // 创建者id
+  string cryptominer_name = 2;        // 矿机名称
+  string cryptominer_picture = 3;     // 矿机图片
+  string cryptominer_describe = 4;    // 矿机描述
+  int64  cryptominer_price = 5;       // 矿机价格
+  int64 cryptominer_duration = 6;    // 矿机运作时间
 }
 
-// 管理系统创建商品
-message  CreateGoodsListResponse{
+// 响应
+message  IsSuccessResponse{
   bool is_success = 1;    // 创建成功
 }
 
-// 获取商城道具列表
+// 管理系统创建道具
+message  CreatePropRequest{
+  int64  adminuser_id = 1;    // 创建者id
+  string prop_name = 2;        // 矿机名称
+  string prop_picture = 3;     // 矿机图片
+  string prop_describe = 4;    // 矿机描述
+  int64  prop_price = 5;       // 矿机价格
+}
+
+// 获取商城列表
 message  GetGoodsListRequest{
   int64  user_id = 1;
 }
 
-// 获取商城道具列表
+// 获取商城列表
 message  GetGoodsListResponse{
-  repeated Good Good = 1;
+  repeated Cryptominer Cryptominer = 1;
+  repeated Prop Prop = 2;
+}
+
+// 矿机
+message Cryptominer {
+  int64 cryptominer_id = 1;              // ID
+  int64 user_id = 2;
+  int64 cryptominer_typeid = 3;          // 矿机种类id
+  string cryptominer_name = 4;           // 矿机名称
+  string cryptominer_picture = 5;        // 矿机图片
+  string cryptominer_describe = 6;       // 矿机描述
+  int64 cryptominer_price = 7;           // 矿机价格
+  string optional_status = 8;            // 矿机状态 0：未购买 1：工作中 2：已失效 3：砍价中
+  string purchase_time = 9;              // 购买时间
+  bool   is_bargain = 10;                // 是否可砍
+  string purchase_way = 11;              // 购买方式 0：全额购买 1：限时砍价
+  string cryptominer_start_time = 12;    // 矿机开始运作时间
+  string cryptominer_end_time = 13;      // 矿机失效时间
+  string cryptominer_duration = 14;      // 矿机运作时间
 }
 
 // 道具
-message Good {
-  int64  goodId = 1;      //ID
-  string goodName = 2;    //道具名称
-  string goodPicture = 3; // 道具图片
-  string goodDescribe =4; // 道具描述
-  int64  goodPrice =5;    // 道具价格
-  string currencyType =6; // 支付货币种类 0：ADF 1：U
-  string optionalStatus =7; // 道具状态 0：未购买 1：砍价中 2：待支付 3：工作中 4：已失效 5：已使用(能量水)
-  string purchaseTime =8; // 购买时间
+message Prop {
+  int64 prop_id = 1;              // ID
+  int64 user_id = 2;
+  int64 prop_typeid = 3;          // 道具种类id
+  string prop_name = 4;           // 道具名称
+  string prop_picture = 5;        // 道具图片
+  string prop_describe = 6;       // 道具描述
+  int64 prop_price = 7;           // 道具价格
+  string purchase_time = 8;       // 购买时间
 }
 
 // 判断是否可以砍价
 message  JudgeBargainRequest{
-  int64  user_id = 1;     // 用户id
+  int64 user_id = 1;               // 用户id
+  int64 cryptominer_typeid = 3;    // 矿机种类ids
 }
 
 // 判断是否可以砍价
@@ -58,20 +87,20 @@ message  JudgeBargainResponse{
   bool is_bargain = 1;    // 砍价id
 }
 
-// 购买
-message  PurchaseRequest{
-  int64  user_id = 1;     // 用户id
-  int64  mall_id = 2;     // 商城id
-  int64  good_id = 3;     // 商品id
+// 矿机全额购买
+message  CryptominerPurchaseRequest{
+  int64  user_id = 1;            // 用户id
+  int64  cryptominer_id = 3;     // 商品id
 }
 
-// 全额购买
-message  FullPurchaseResponse{
-  bool is_success = 1;    // 购买成功
+// 矿机限时购买
+message  CryptominerBargainRequest{
+  int64  user_id = 1;            // 用户id
+  int64  cryptominer_id = 3;     // 商品id
 }
 
-// 限时购买
-message  BargainPurchaseResponse{
+// 矿机限时购买
+message  CryptominerBargainResponse{
   int64 bargain_id = 1;   // 砍价id
   bool is_first   = 2;    // 是否为第一次砍价
 }
@@ -87,14 +116,14 @@ message  GetBargainRuleResponse{
 }
 
 // 获取砍价商品信息
-message  GetBargainGoodRequest{
-  int64 good_id = 1;      // 商品id
+message  GetBargainCryptominerRequest{
+  int64 cryptominer_id = 1;      // 矿机id
 }
 
-// 获取砍价商品信息
-message  GetBargainGoodResponse{
-  string goodName = 1;    //道具名称
-  string goodPicture = 2; // 道具图片
+// 获取砍价矿机信息
+message  GetBargainCryptominerResponse{
+  string cryptominer_name = 1;    // 矿机名称
+  string cryptominer_picture = 2; // 矿机图片
 }
 
 // 获取砍价进度
@@ -104,8 +133,8 @@ message  GetBargainProgressRequest{
 
 // 获取砍价进度
 message  GetBargainProgressResponse{
-  string activityStartTime = 1;    // 活动开始时间
-  float remainingPrice = 2;        // 剩余金额
+  string activity_starttime = 1;    // 活动开始时间
+  float remaining_rice = 2;        // 剩余金额
 }
 
 // 获取砍价记录列表
@@ -115,37 +144,38 @@ message  GetBargainRecordRequest{
 
 // 获取砍价记录列表
 message  GetBargainRecordResponse{
-  repeated Good Good = 1; // 商品
+  repeated Cryptominer Cryptominer = 1;       // 矿机
   repeated BargainAmount BargainAmount   = 2; // 每份金额计算
   repeated Profile Profile   = 3;             // 对应金额的砍价人信息
 }
 
 // 金额计算
 message BargainAmount {
-  float firstBargainPercentage = 1; // 初次砍价百分比
-  float bargainMinPrice = 2;        // 砍价最小额度
-  float bargainPrice = 3;           // 本次砍价额度
+  float firstbargain_percentage = 1; // 初次砍价百分比
+  float bargain_minprice = 2;        // 砍价最小额度
+  float bargain_price = 3;           // 本次砍价额度
 }
 
 // Profile 暂时从用户服务拿到
 message Profile {
   int64 user_id = 1;       // 用户id
-  string userName = 2;     // 用户名
+  string user_name = 2;     // 用户名
   string avatar = 3;       // 用户头像
 }
 
 //商城区
 service Block {
   rpc Ping(Request) returns(Response);
-  rpc CreateGoodsList(CreateGoodsListRequest) returns(CreateGoodsListResponse); // 管理系统添加商品
-  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse); // 获取商品列表
-  rpc JudgeBargain(JudgeBargainRequest) returns(JudgeBargainResponse);
-  rpc FullPurchase(PurchaseRequest) returns(FullPurchaseResponse);
-  rpc BargainPurchase(PurchaseRequest) returns(BargainPurchaseResponse);
-  rpc GetBargainRule(GetBargainRuleRequest) returns(GetBargainRuleResponse);
-  rpc GetBargainGood(GetBargainGoodRequest) returns(GetBargainGoodResponse);
-  rpc GetBargainProgress(GetBargainProgressRequest) returns(GetBargainProgressResponse);
-  rpc GetBargainRecord(GetBargainRecordRequest) returns(GetBargainRecordResponse);
+  rpc CreateCryptominer(CreateCryptominerRequest) returns(IsSuccessResponse); // 管理系统添加矿机
+  rpc CreateProp(CreatePropRequest) returns(IsSuccessResponse);               // 管理系统添加道具
+  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse);        // 获取商品列表
+  rpc JudgeBargain(JudgeBargainRequest) returns(JudgeBargainResponse);        // 判断是否可砍
+  rpc CryptominerFullPurchase(CryptominerPurchaseRequest) returns(IsSuccessResponse);               // 全额购买
+  rpc CryptominerBargainPurchase(CryptominerBargainRequest) returns(CryptominerBargainResponse);      // 砍价购买
+  rpc GetBargainRule(GetBargainRuleRequest) returns(GetBargainRuleResponse);  // 获取规则
+  rpc GetBargainCryptominer(GetBargainCryptominerRequest) returns(GetBargainCryptominerResponse); // 获取砍价矿机信息
+  rpc GetBargainProgress(GetBargainProgressRequest) returns(GetBargainProgressResponse);          // 获取砍价进度
+  rpc GetBargainRecord(GetBargainRecordRequest) returns(GetBargainRecordResponse);                // 获取砍价记录列表
 }
 
 
