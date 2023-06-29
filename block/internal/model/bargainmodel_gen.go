@@ -37,8 +37,8 @@ type (
 
 	Bargain struct {
 		BargainId         int64        `db:"bargain_id"`
-		GoodId            int64        `db:"good_id"`
-		GoodPrice         int64        `db:"good_price"`
+		CryptominerId     int64        `db:"cryptominer_id"`
+		CryptominerPrice  int64        `db:"cryptominer_price"`
 		RemainingPrice    float64      `db:"remaining_price"`
 		ActivityStartTime time.Time    `db:"activity_start_time"`
 		ActivityEndTime   sql.NullTime `db:"activity_end_time"`
@@ -74,13 +74,13 @@ func (m *defaultBargainModel) FindOne(ctx context.Context, bargainId int64) (*Ba
 
 func (m *defaultBargainModel) Insert(ctx context.Context, data *Bargain) (sql.Result, error) {
 	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, bargainRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.GoodId, data.GoodPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime)
+	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.CryptominerId, data.CryptominerPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime)
 	return ret, err
 }
 
 func (m *defaultBargainModel) Update(ctx context.Context, data *Bargain) error {
 	query := fmt.Sprintf("update %s set %s where `bargain_id` = ?", m.table, bargainRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.GoodId, data.GoodPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime, data.BargainId)
+	_, err := m.conn.ExecCtx(ctx, query, data.CryptominerId, data.CryptominerPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime, data.BargainId)
 	return err
 }
 
