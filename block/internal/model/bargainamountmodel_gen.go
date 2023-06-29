@@ -36,6 +36,7 @@ type (
 
 	BargainAmount struct {
 		BargainId              int64   `db:"bargain_id"`
+		UserId                 int64   `db:"user_id"`
 		FirstBargainPercentage float64 `db:"first_bargain_percentage"`
 		BargainMinPrice        float64 `db:"bargain_min_price"`
 		BargainPrice           float64 `db:"bargain_price"`
@@ -70,14 +71,14 @@ func (m *defaultBargainAmountModel) FindOne(ctx context.Context, bargainId int64
 }
 
 func (m *defaultBargainAmountModel) Insert(ctx context.Context, data *BargainAmount) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, bargainAmountRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.FirstBargainPercentage, data.BargainMinPrice, data.BargainPrice)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, bargainAmountRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.UserId, data.FirstBargainPercentage, data.BargainMinPrice, data.BargainPrice)
 	return ret, err
 }
 
 func (m *defaultBargainAmountModel) Update(ctx context.Context, data *BargainAmount) error {
 	query := fmt.Sprintf("update %s set %s where `bargain_id` = ?", m.table, bargainAmountRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.FirstBargainPercentage, data.BargainMinPrice, data.BargainPrice, data.BargainId)
+	_, err := m.conn.ExecCtx(ctx, query, data.UserId, data.FirstBargainPercentage, data.BargainMinPrice, data.BargainPrice, data.BargainId)
 	return err
 }
 
