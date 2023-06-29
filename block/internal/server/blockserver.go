@@ -27,9 +27,14 @@ func (s *BlockServer) Ping(ctx context.Context, in *block.Request) (*block.Respo
 	return l.Ping(in)
 }
 
-func (s *BlockServer) CreateGoodsList(ctx context.Context, in *block.CreateGoodsListRequest) (*block.CreateGoodsListResponse, error) {
-	l := logic.NewCreateGoodsListLogic(ctx, s.svcCtx)
-	return l.CreateGoodsList(in)
+func (s *BlockServer) CreateCryptominer(ctx context.Context, in *block.CreateCryptominerRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewCreateCryptominerLogic(ctx, s.svcCtx)
+	return l.CreateCryptominer(in)
+}
+
+func (s *BlockServer) CreateProp(ctx context.Context, in *block.CreatePropRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewCreatePropLogic(ctx, s.svcCtx)
+	return l.CreateProp(in)
 }
 
 func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
@@ -42,7 +47,7 @@ func (s *BlockServer) JudgeBargain(ctx context.Context, in *block.JudgeBargainRe
 	return l.JudgeBargain(in)
 }
 
-func (s *BlockServer) FullPurchase(ctx context.Context, in *block.PurchaseRequest) (*block.FullPurchaseResponse, error) {
+func (s *BlockServer) FullPurchase(ctx context.Context, in *block.PurchaseRequest) (*block.IsSuccessResponse, error) {
 	l := logic.NewFullPurchaseLogic(ctx, s.svcCtx)
 	return l.FullPurchase(in)
 }
@@ -57,9 +62,9 @@ func (s *BlockServer) GetBargainRule(ctx context.Context, in *block.GetBargainRu
 	return l.GetBargainRule(in)
 }
 
-func (s *BlockServer) GetBargainGood(ctx context.Context, in *block.GetBargainGoodRequest) (*block.GetBargainGoodResponse, error) {
-	l := logic.NewGetBargainGoodLogic(ctx, s.svcCtx)
-	return l.GetBargainGood(in)
+func (s *BlockServer) GetBargainCryptominer(ctx context.Context, in *block.GetBargainCryptominerRequest) (*block.GetBargainCryptominerResponse, error) {
+	l := logic.NewGetBargainCryptominerLogic(ctx, s.svcCtx)
+	return l.GetBargainCryptominer(in)
 }
 
 func (s *BlockServer) GetBargainProgress(ctx context.Context, in *block.GetBargainProgressRequest) (*block.GetBargainProgressResponse, error) {
