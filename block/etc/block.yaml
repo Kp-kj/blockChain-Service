@@ -14,7 +14,7 @@ Log:
 
 Etcd:
   Hosts:
-  - 127.0.0.1:2379
+  - 47.243.34.199:2379
   Key: block.rpc
 
 DB:
