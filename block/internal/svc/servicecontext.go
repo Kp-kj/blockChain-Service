@@ -11,8 +11,12 @@ type ServiceContext struct {
 	BargainAmountModel           model.BargainAmountModel
 	BargainModel                 model.BargainModel
 	BillDetailsModel             model.BillDetailsModel
-	GoodsModel                   model.GoodsModel
-	ManageGoodsModel             model.ManageGoodsModel
+	ManageCryptominerModel       model.ManageCryptominerModel
+	ManagePropModel              model.ManagePropModel
+	CryptominerModel             model.CryptominerModel
+	PropModel                    model.PropModel
+	UserCryptominerModel         model.UserCryptominerModel
+	UserPropModel                model.UserPropModel
 	PurchaseRecordsModel         model.PurchaseRecordsModel
 	WalletsModel                 model.WalletsModel
 	YesterdayBillModel           model.YesterdayBillModel
@@ -26,8 +30,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		BargainAmountModel:           model.NewBargainAmountModel(sqlx.NewMysql(c.DB.DataSource)),
 		BargainModel:                 model.NewBargainModel(sqlx.NewMysql(c.DB.DataSource)),
 		BillDetailsModel:             model.NewBillDetailsModel(sqlx.NewMysql(c.DB.DataSource)),
-		GoodsModel:                   model.NewGoodsModel(sqlx.NewMysql(c.DB.DataSource)),
-		ManageGoodsModel:             model.NewManageGoodsModel(sqlx.NewMysql(c.DB.DataSource)),
+		ManageCryptominerModel:       model.NewManageCryptominerModel(sqlx.NewMysql(c.DB.DataSource)),
+		ManagePropModel:              model.NewManagePropModel(sqlx.NewMysql(c.DB.DataSource)),
+		CryptominerModel:             model.NewCryptominerModel(sqlx.NewMysql(c.DB.DataSource)),
+		PropModel:                    model.NewPropModel(sqlx.NewMysql(c.DB.DataSource)),
+		UserCryptominerModel:         model.NewUserCryptominerModel(sqlx.NewMysql(c.DB.DataSource)),
+		UserPropModel:                model.NewUserPropModel(sqlx.NewMysql(c.DB.DataSource)),
 		PurchaseRecordsModel:         model.NewPurchaseRecordsModel(sqlx.NewMysql(c.DB.DataSource)),
 		WalletsModel:                 model.NewWalletsModel(sqlx.NewMysql(c.DB.DataSource)),
 		YesterdayBillModel:           model.NewYesterdayBillModel(sqlx.NewMysql(c.DB.DataSource)),
