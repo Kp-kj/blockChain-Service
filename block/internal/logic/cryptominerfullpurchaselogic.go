@@ -30,7 +30,7 @@ func NewCryptominerFullPurchaseLogic(ctx context.Context, svcCtx *svc.ServiceCon
 func (l *CryptominerFullPurchaseLogic) CryptominerFullPurchase(in *block.CryptominerPurchaseRequest) (*block.IsSuccessResponse, error) {
 
 	// 添加矿机属性
-	Cryptominer, err := l.svcCtx.CryptominerModel.FindOneByCryptominerid(l.ctx, in.CryptominerId)
+	Cryptominer, err := l.svcCtx.CryptominerModel.FindOneByCryptominerId(l.ctx, in.CryptominerId)
 	if err == nil {
 		logx.Error(err)
 		return nil, err

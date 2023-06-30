@@ -447,7 +447,7 @@ type Cryptominer struct {
 	CryptominerPicture   string `protobuf:"bytes,5,opt,name=cryptominer_picture,json=cryptominerPicture,proto3" json:"cryptominer_picture,omitempty"`          // 矿机图片
 	CryptominerDescribe  string `protobuf:"bytes,6,opt,name=cryptominer_describe,json=cryptominerDescribe,proto3" json:"cryptominer_describe,omitempty"`       // 矿机描述
 	CryptominerPrice     int64  `protobuf:"varint,7,opt,name=cryptominer_price,json=cryptominerPrice,proto3" json:"cryptominer_price,omitempty"`               // 矿机价格
-	OptionalStatus       string `protobuf:"bytes,8,opt,name=optional_status,json=optionalStatus,proto3" json:"optional_status,omitempty"`                      // 矿机状态 0：未购买 1：砍价中 2：待支付 3：工作中 4：已失效
+	OptionalStatus       string `protobuf:"bytes,8,opt,name=optional_status,json=optionalStatus,proto3" json:"optional_status,omitempty"`                      // 矿机状态 0：未购买 1：工作中 2：已失效 3：砍价中
 	PurchaseTime         string `protobuf:"bytes,9,opt,name=purchase_time,json=purchaseTime,proto3" json:"purchase_time,omitempty"`                            // 购买时间
 	IsBargain            bool   `protobuf:"varint,10,opt,name=is_bargain,json=isBargain,proto3" json:"is_bargain,omitempty"`                                   // 是否可砍
 	PurchaseWay          string `protobuf:"bytes,11,opt,name=purchase_way,json=purchaseWay,proto3" json:"purchase_way,omitempty"`                              // 购买方式 0：全额购买 1：限时砍价
