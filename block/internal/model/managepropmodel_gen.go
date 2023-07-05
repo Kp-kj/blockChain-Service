@@ -47,6 +47,7 @@ type (
 		PropPicture  sql.NullString `db:"prop_picture"`
 		PropDescribe sql.NullString `db:"prop_describe"`
 		PropPrice    int64          `db:"prop_price"`
+		PaymentWay   string         `db:"payment_way"`
 	}
 )
 
@@ -78,14 +79,14 @@ func (m *defaultManagePropModel) FindOne(ctx context.Context, propTypeid int64) 
 }
 
 func (m *defaultManagePropModel) Insert(ctx context.Context, data *ManageProp) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, managePropRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PropTypeid, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, managePropRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PropTypeid, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay)
 	return ret, err
 }
 
 func (m *defaultManagePropModel) Update(ctx context.Context, data *ManageProp) error {
 	query := fmt.Sprintf("update %s set %s where `prop_typeid` = ?", m.table, managePropRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PropTypeid)
+	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.PropTypeid)
 	return err
 }
 

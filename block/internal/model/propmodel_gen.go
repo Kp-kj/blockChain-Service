@@ -26,9 +26,10 @@ type (
 	propModel interface {
 		Insert(ctx context.Context, data *Prop) (sql.Result, error)
 		FindOne(ctx context.Context, propId int64) (*Prop, error)
-		FindOneByPropId(ctx context.Context, propId int64) (*Prop, error)
 		Update(ctx context.Context, data *Prop) error
 		Delete(ctx context.Context, propId int64) error
+		FindOneByPropId(ctx context.Context, propId int64) (*Prop, error)
+		FindPropInUser(ctx context.Context, userId int64, PropTypeid int64) (*Prop, error)
 	}
 
 	defaultPropModel struct {
@@ -37,17 +38,19 @@ type (
 	}
 
 	Prop struct {
-		PropId       int64          `db:"prop_id"`
-		CreatedAt    time.Time      `db:"created_at"`
-		UpdatedAt    sql.NullTime   `db:"updated_at"`
-		DeletedAt    sql.NullTime   `db:"deleted_at"`
-		UserId       sql.NullInt64  `db:"user_id"`
-		PropTypeid   int64          `db:"prop_typeid"`
-		PropName     string         `db:"prop_name"`
-		PropPicture  sql.NullString `db:"prop_picture"`
-		PropPrice    int64          `db:"prop_price"`
-		PropDescribe sql.NullString `db:"prop_describe"`
-		PurchaseTime sql.NullTime   `db:"purchase_time"`
+		PropId         int64          `db:"prop_id"`
+		CreatedAt      time.Time      `db:"created_at"`
+		UpdatedAt      sql.NullTime   `db:"updated_at"`
+		DeletedAt      sql.NullTime   `db:"deleted_at"`
+		UserId         int64  		  `db:"user_id"`
+		PropTypeid     int64          `db:"prop_typeid"`
+		PropName       string         `db:"prop_name"`
+		PropPicture    sql.NullString `db:"prop_picture"`
+		PropPrice      int64          `db:"prop_price"`
+		PaymentWay     string         `db:"payment_way"`
+		PropDescribe   sql.NullString `db:"prop_describe"`
+		PurchaseTime   sql.NullTime   `db:"purchase_time"`
+		OptionalStatus string         `db:"optional_status"`
 	}
 )
 
@@ -78,6 +81,19 @@ func (m *defaultPropModel) FindOne(ctx context.Context, propId int64) (*Prop, er
 	}
 }
 
+func (m *defaultPropModel) Insert(ctx context.Context, data *Prop) (sql.Result, error) {
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PropId, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus)
+	return ret, err
+}
+
+func (m *defaultPropModel) Update(ctx context.Context, data *Prop) error {
+	theRows := "`user_id`, `prop_typeid`, `prop_name`, `prop_picture`, `prop_price`, `payment_way`,`prop_describe`, `purchase_time`, `optional_status`,`prop_id`"
+	query := fmt.Sprintf("update %s set %s where `prop_id` = ?", m.table, theRows)
+	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus, data.PropId)
+	return err
+}
+
 func (m *defaultPropModel) FindOneByPropId(ctx context.Context, propId int64) (*Prop, error) {
 	var resp Prop
 	query := fmt.Sprintf("select %s from %s where `prop_id` = ? limit 1", propRows, m.table)
@@ -92,18 +108,21 @@ func (m *defaultPropModel) FindOneByPropId(ctx context.Context, propId int64) (*
 	}
 }
 
-func (m *defaultPropModel) Insert(ctx context.Context, data *Prop) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PropId, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PropDescribe, data.PurchaseTime)
-	return ret, err
-}
-
-func (m *defaultPropModel) Update(ctx context.Context, newData *Prop) error {
-	query := fmt.Sprintf("update %s set %s where `prop_id` = ?", m.table, propRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.DeletedAt, newData.UserId, newData.PropTypeid, newData.PropName, newData.PropPicture, newData.PropPrice, newData.PropDescribe, newData.PurchaseTime, newData.PropId)
-	return err
+func (m *defaultPropModel) FindPropInUser(ctx context.Context, userId int64, PropTypeid int64) (*Prop, error) {
+	var resp Prop
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `prop_typeid` = ?  and `optional_status` = ? limit 1", propRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, PropTypeid, "0")
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultPropModel) tableName() string {
 	return m.table
 }
+

@@ -42,10 +42,11 @@ func (l *CreateCryptominerLogic) CreateCryptominer(in *block.CreateCryptominerRe
 		CryptominerTypeid:   typeId.Generate().Int64(),
 		AdminuserId:         in.AdminuserId,
 		CryptominerName:     in.CryptominerName,
-		CryptominerPicture:  sql.NullString{String: in.CryptominerPicture},
-		CryptominerDescribe: sql.NullString{String: in.CryptominerDescribe},
+		CryptominerPicture:  sql.NullString{String: in.CryptominerPicture, Valid: true},
+		CryptominerDescribe: sql.NullString{String: in.CryptominerDescribe, Valid: true},
 		CryptominerPrice:    in.CryptominerPrice,
 		CryptominerDuration: in.CryptominerDuration,
+		PaymentWay:          in.PaymentWay,
 	}
 
 	_, err = l.svcCtx.ManageCryptominerModel.Insert(l.ctx, createCryptominer)
@@ -54,6 +55,7 @@ func (l *CreateCryptominerLogic) CreateCryptominer(in *block.CreateCryptominerRe
 			IsSuccess: false,
 		}, nil
 	}
+
 	return &block.IsSuccessResponse{
 		IsSuccess: true,
 	}, nil

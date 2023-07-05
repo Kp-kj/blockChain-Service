@@ -37,6 +37,11 @@ func (s *BlockServer) CreateProp(ctx context.Context, in *block.CreatePropReques
 	return l.CreateProp(in)
 }
 
+func (s *BlockServer) CreateActivity(ctx context.Context, in *block.CreateActivityRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewCreateActivityLogic(ctx, s.svcCtx)
+	return l.CreateActivity(in)
+}
+
 func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
 	l := logic.NewGetGoodsListLogic(ctx, s.svcCtx)
 	return l.GetGoodsList(in)
@@ -57,6 +62,11 @@ func (s *BlockServer) CryptominerBargainPurchase(ctx context.Context, in *block.
 	return l.CryptominerBargainPurchase(in)
 }
 
+func (s *BlockServer) PropPurchase(ctx context.Context, in *block.PropPurchaseRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewPropPurchaseLogic(ctx, s.svcCtx)
+	return l.PropPurchase(in)
+}
+
 func (s *BlockServer) GetBargainRule(ctx context.Context, in *block.GetBargainRuleRequest) (*block.GetBargainRuleResponse, error) {
 	l := logic.NewGetBargainRuleLogic(ctx, s.svcCtx)
 	return l.GetBargainRule(in)
@@ -72,7 +82,12 @@ func (s *BlockServer) GetBargainProgress(ctx context.Context, in *block.GetBarga
 	return l.GetBargainProgress(in)
 }
 
-func (s *BlockServer) GetBargainRecord(ctx context.Context, in *block.GetBargainRecordRequest) (*block.GetBargainRecordResponse, error) {
-	l := logic.NewGetBargainRecordLogic(ctx, s.svcCtx)
-	return l.GetBargainRecord(in)
+func (s *BlockServer) GetPurchaseRecord(ctx context.Context, in *block.GetPurchaseRecordRequest) (*block.GetPurchaseRecordResponse, error) {
+	l := logic.NewGetPurchaseRecordLogic(ctx, s.svcCtx)
+	return l.GetPurchaseRecord(in)
+}
+
+func (s *BlockServer) JudgeGoodsPurchase(ctx context.Context, in *block.JudgeGoodsPurchaseRequest) (*block.JudgeGoodsPurchaseResponse, error) {
+	l := logic.NewJudgeGoodsPurchaseLogic(ctx, s.svcCtx)
+	return l.JudgeGoodsPurchase(in)
 }
