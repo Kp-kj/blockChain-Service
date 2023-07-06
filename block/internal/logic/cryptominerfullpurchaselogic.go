@@ -35,15 +35,17 @@ func (l *CryptominerFullPurchaseLogic) CryptominerFullPurchase(in *block.Cryptom
 		logx.Error(err)
 		return nil, err
 	}
-	Cryptominer.UserId = in.UserId
 	Cryptominer.PurchaseWay = sql.NullString{String: "0", Valid: true} // 购买方式 0：全额购买 1：限时砍价
 	Cryptominer.PurchaseTime = sql.NullTime{Time: time.Now(), Valid: true}
 	Cryptominer.OptionalStatus = "1" // 矿机状态 0：未购买 1：工作中 2：已失效 3：砍价中
 	Cryptominer.CryptominerStartTime = Cryptominer.PurchaseTime
 	Cryptominer.CryptominerEndTime = sql.NullTime{Time: time.Now().Add(time.Hour * 24 * time.Duration(Cryptominer.CryptominerDuration)), Valid: true}
 
-	l.svcCtx.CryptominerModel.Update(l.ctx, Cryptominer)
-
+	err = l.svcCtx.CryptominerModel.Update(l.ctx, Cryptominer)
+	if err != nil {
+		logx.Error(err)
+		return nil, err
+	}
 	// 添加购买记录
 	recordId, err := snowflake.NewNode(1)
 	if err != nil {
@@ -61,7 +63,6 @@ func (l *CryptominerFullPurchaseLogic) CryptominerFullPurchase(in *block.Cryptom
 		PurchasePrice:    sql.NullInt64{Int64: int64(Cryptominer.CryptominerPrice), Valid: true},
 		PaymentWay:       Cryptominer.PaymentWay,
 	}
-
 	_, err = l.svcCtx.PurchaseRecordsModel.Insert(l.ctx, PurchaseRecordModel)
 	if err != nil {
 		logx.Error(err)
