@@ -7,7 +7,6 @@ import (
 	"context"
 	"github.com/bwmarrin/snowflake"
 	"github.com/zeromicro/go-zero/core/logx"
-	"strconv"
 )
 
 type GetGoodsListLogic struct {
@@ -26,10 +25,10 @@ func NewGetGoodsListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetG
 
 func (l *GetGoodsListLogic) GetGoodsList(in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
 
-	// 搜索用户矿机库中是否存在
+	// 创建实体矿机
 	ManageCryptominers, _ := l.svcCtx.ManageCryptominerModel.SelectAllCryptominer(l.ctx)
-	var Cryptominers []*block.Cryptominer
 
+	var Cryptominers []*block.Cryptominer
 	for _, cryptominer := range ManageCryptominers {
 
 		// 查询用户矿机表中是否有未购买的矿机存在
@@ -51,12 +50,16 @@ func (l *GetGoodsListLogic) GetGoodsList(in *block.GetGoodsListRequest) (*block.
 				CryptominerDescribe: cryptominer.CryptominerDescribe,
 				CryptominerPrice:    cryptominer.CryptominerPrice,
 				CryptominerDuration: cryptominer.CryptominerDuration,
+				CryptominerPower:    cryptominer.CryptominerPower,
 				PaymentWay:          cryptominer.PaymentWay,
 				OptionalStatus:      "0", // 矿机状态 0：未购买 1：工作中 2：已失效 3：砍价中
 				IsBargain:           1,
 			}
 			_, err = l.svcCtx.CryptominerModel.Insert(l.ctx, CryptominerModel)
-
+			if err != nil {
+				logx.Error(err)
+				return nil, err
+			}
 			// 提供给用户展示
 			NewCryptominer := &block.Cryptominer{
 				UserId:              in.UserId,
@@ -66,7 +69,8 @@ func (l *GetGoodsListLogic) GetGoodsList(in *block.GetGoodsListRequest) (*block.
 				CryptominerPicture:  cryptominer.CryptominerPicture.String,
 				CryptominerDescribe: cryptominer.CryptominerDescribe.String,
 				CryptominerPrice:    cryptominer.CryptominerPrice,
-				CryptominerDuration: strconv.FormatInt(cryptominer.CryptominerDuration, 10),
+				CryptominerDuration: cryptominer.CryptominerDuration,
+				CryptominerPower:    cryptominer.CryptominerPower,
 				PaymentWay:          cryptominer.PaymentWay,
 				OptionalStatus:      "0", // 矿机状态 0：未购买 1：工作中 2：已失效 3：砍价中
 				IsBargain:           true,
@@ -88,7 +92,8 @@ func (l *GetGoodsListLogic) GetGoodsList(in *block.GetGoodsListRequest) (*block.
 				CryptominerPicture:  userCryptominers.CryptominerPicture.String,
 				CryptominerDescribe: userCryptominers.CryptominerDescribe.String,
 				CryptominerPrice:    userCryptominers.CryptominerPrice,
-				CryptominerDuration: strconv.FormatInt(userCryptominers.CryptominerDuration, 10),
+				CryptominerDuration: cryptominer.CryptominerDuration,
+				CryptominerPower:    cryptominer.CryptominerPower,
 				PaymentWay:          userCryptominers.PaymentWay,
 				OptionalStatus:      userCryptominers.OptionalStatus, // 矿机状态 0：未购买 1：工作中 2：已失效 3：砍价中
 				IsBargain:           judgeTheBargain,                 //  是否可砍，根据当天是否砍价决定 0：不可砍 1：可砍

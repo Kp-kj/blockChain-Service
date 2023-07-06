@@ -48,6 +48,7 @@ type (
 		CryptominerDescribe sql.NullString `db:"cryptominer_describe"`
 		CryptominerPrice    int64          `db:"cryptominer_price"`
 		CryptominerDuration int64          `db:"cryptominer_duration"`
+		CryptominerPower    int64          `db:"cryptominer_power"`
 		PaymentWay          string         `db:"payment_way"`
 	}
 )
@@ -80,14 +81,14 @@ func (m *defaultManageCryptominerModel) FindOne(ctx context.Context, cryptominer
 }
 
 func (m *defaultManageCryptominerModel) Insert(ctx context.Context, data *ManageCryptominer) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageCryptominerRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.PaymentWay)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageCryptominerRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay)
 	return ret, err
 }
 
 func (m *defaultManageCryptominerModel) Update(ctx context.Context, data *ManageCryptominer) error {
 	query := fmt.Sprintf("update %s set %s where `cryptominer_typeid` = ?", m.table, manageCryptominerRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.PaymentWay, data.CryptominerTypeid)
+	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.CryptominerTypeid)
 	return err
 }
 

@@ -46,6 +46,7 @@ func (l *CreateCryptominerLogic) CreateCryptominer(in *block.CreateCryptominerRe
 		CryptominerDescribe: sql.NullString{String: in.CryptominerDescribe, Valid: true},
 		CryptominerPrice:    in.CryptominerPrice,
 		CryptominerDuration: in.CryptominerDuration,
+		CryptominerPower:    in.CryptominerPower,
 		PaymentWay:          in.PaymentWay,
 	}
 
