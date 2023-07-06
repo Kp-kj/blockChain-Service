@@ -27,6 +27,7 @@ func NewCreatePropLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 }
 
 func (l *CreatePropLogic) CreateProp(in *block.CreatePropRequest) (*block.IsSuccessResponse, error) {
+
 	// 查询是否有道具
 	_, err := l.svcCtx.ManagePropModel.FindOneByPropName(l.ctx, in.PropName)
 	if err == nil {
@@ -42,9 +43,10 @@ func (l *CreatePropLogic) CreateProp(in *block.CreatePropRequest) (*block.IsSucc
 		PropTypeid:   typeId.Generate().Int64(),
 		AdminuserId:  in.AdminuserId,
 		PropName:     in.PropName,
-		PropPicture:  sql.NullString{String: in.PropPicture},
-		PropDescribe: sql.NullString{String: in.PropDescribe},
+		PropPicture:  sql.NullString{String: in.PropPicture, Valid: true},
+		PropDescribe: sql.NullString{String: in.PropDescribe, Valid: true},
 		PropPrice:    in.PropPrice,
+		PaymentWay:   in.PaymentWay,
 	}
 
 	_, err = l.svcCtx.ManagePropModel.Insert(l.ctx, createProp)
