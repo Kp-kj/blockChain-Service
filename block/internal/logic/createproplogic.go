@@ -47,6 +47,7 @@ func (l *CreatePropLogic) CreateProp(in *block.CreatePropRequest) (*block.IsSucc
 		PropDescribe: sql.NullString{String: in.PropDescribe, Valid: true},
 		PropPrice:    in.PropPrice,
 		PaymentWay:   in.PaymentWay,
+		GoodStatus:   "0", // 商品状态  0：待上架  1：已上架 2：未上架
 	}
 
 	_, err = l.svcCtx.ManagePropModel.Insert(l.ctx, createProp)

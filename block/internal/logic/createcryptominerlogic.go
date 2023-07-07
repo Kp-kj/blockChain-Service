@@ -48,6 +48,7 @@ func (l *CreateCryptominerLogic) CreateCryptominer(in *block.CreateCryptominerRe
 		CryptominerDuration: in.CryptominerDuration,
 		CryptominerPower:    in.CryptominerPower,
 		PaymentWay:          in.PaymentWay,
+		GoodStatus:          "0", // 商品状态  0：待上架  1：已上架 2：未上架
 	}
 
 	_, err = l.svcCtx.ManageCryptominerModel.Insert(l.ctx, createCryptominer)

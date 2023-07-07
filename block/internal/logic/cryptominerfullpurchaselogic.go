@@ -60,7 +60,7 @@ func (l *CryptominerFullPurchaseLogic) CryptominerFullPurchase(in *block.Cryptom
 		PurchaseWay:      "0", // 购买方式 0：全额购买 1：限时砍价
 		GoodQuantity:     1,
 		PurchaseTime:     Cryptominer.PurchaseTime.Time,
-		PurchasePrice:    sql.NullInt64{Int64: int64(Cryptominer.CryptominerPrice), Valid: true},
+		PurchasePrice:    sql.NullFloat64{Float64: float64(Cryptominer.CryptominerPrice), Valid: true},
 		PaymentWay:       Cryptominer.PaymentWay,
 	}
 	_, err = l.svcCtx.PurchaseRecordsModel.Insert(l.ctx, PurchaseRecordModel)

@@ -28,6 +28,7 @@ type (
 		FindOne(ctx context.Context, cryptominerTypeid int64) (*ManageCryptominer, error)
 		Update(ctx context.Context, data *ManageCryptominer) error
 		Delete(ctx context.Context, cryptominerTypeid int64) error
+		SelectCryptominer(ctx context.Context) ([]*ManageCryptominer, error)
 		SelectAllCryptominer(ctx context.Context) ([]*ManageCryptominer, error)
 		FindOneByCryptominerName(ctx context.Context, cryptominerName string) (*ManageCryptominer, error)
 	}
@@ -50,6 +51,7 @@ type (
 		CryptominerDuration int64          `db:"cryptominer_duration"`
 		CryptominerPower    int64          `db:"cryptominer_power"`
 		PaymentWay          string         `db:"payment_way"`
+		GoodStatus          string         `db:"good_status"`
 	}
 )
 
@@ -81,19 +83,33 @@ func (m *defaultManageCryptominerModel) FindOne(ctx context.Context, cryptominer
 }
 
 func (m *defaultManageCryptominerModel) Insert(ctx context.Context, data *ManageCryptominer) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageCryptominerRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageCryptominerRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.GoodStatus)
 	return ret, err
 }
 
 func (m *defaultManageCryptominerModel) Update(ctx context.Context, data *ManageCryptominer) error {
 	query := fmt.Sprintf("update %s set %s where `cryptominer_typeid` = ?", m.table, manageCryptominerRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.CryptominerTypeid)
+	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.GoodStatus, data.CryptominerTypeid)
 	return err
 }
 
+func (m *defaultManageCryptominerModel) SelectCryptominer(ctx context.Context) ([]*ManageCryptominer, error) {
+	query := fmt.Sprintf("select %s from %s where `good_status` = ? ", manageCryptominerRows, m.table)
+	var resp []*ManageCryptominer
+	err := m.conn.QueryRowsCtx(ctx, &resp, query,"1")
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultManageCryptominerModel) SelectAllCryptominer(ctx context.Context) ([]*ManageCryptominer, error) {
-	query := fmt.Sprintf("select %s from %s ", manageCryptominerRows, m.table)
+	query := fmt.Sprintf("select %s from %s", manageCryptominerRows, m.table)
 	var resp []*ManageCryptominer
 	err := m.conn.QueryRowsCtx(ctx, &resp, query)
 	switch err {

@@ -28,6 +28,7 @@ type (
 		FindOne(ctx context.Context, propTypeid int64) (*ManageProp, error)
 		Update(ctx context.Context, data *ManageProp) error
 		Delete(ctx context.Context, propTypeid int64) error
+		SelectProp(ctx context.Context) ([]*ManageProp, error)
 		SelectAllProp(ctx context.Context) ([]*ManageProp, error)
 		FindOneByPropName(ctx context.Context, propName string) (*ManageProp, error)
 	}
@@ -48,6 +49,7 @@ type (
 		PropDescribe sql.NullString `db:"prop_describe"`
 		PropPrice    int64          `db:"prop_price"`
 		PaymentWay   string         `db:"payment_way"`
+		GoodStatus   string         `db:"good_status"`
 	}
 )
 
@@ -79,15 +81,29 @@ func (m *defaultManagePropModel) FindOne(ctx context.Context, propTypeid int64) 
 }
 
 func (m *defaultManagePropModel) Insert(ctx context.Context, data *ManageProp) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, managePropRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PropTypeid, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, managePropRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PropTypeid, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.GoodStatus)
 	return ret, err
 }
 
 func (m *defaultManagePropModel) Update(ctx context.Context, data *ManageProp) error {
 	query := fmt.Sprintf("update %s set %s where `prop_typeid` = ?", m.table, managePropRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.PropTypeid)
+	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.GoodStatus, data.PropTypeid)
 	return err
+}
+
+func (m *defaultManagePropModel) SelectProp(ctx context.Context) ([]*ManageProp, error) {
+	query := fmt.Sprintf("select %s from %s where `good_status` = ? ", managePropRows, m.table)
+	var resp []*ManageProp
+	err := m.conn.QueryRowsCtx(ctx, &resp, query,"1")
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultManagePropModel) SelectAllProp(ctx context.Context) ([]*ManageProp, error) {

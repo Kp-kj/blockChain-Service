@@ -22,7 +22,11 @@ const (
 	Block_Ping_FullMethodName                       = "/block.Block/Ping"
 	Block_CreateCryptominer_FullMethodName          = "/block.Block/CreateCryptominer"
 	Block_CreateProp_FullMethodName                 = "/block.Block/CreateProp"
+	Block_AdminGoodList_FullMethodName              = "/block.Block/AdminGoodList"
+	Block_StartGood_FullMethodName                  = "/block.Block/StartGood"
 	Block_CreateActivity_FullMethodName             = "/block.Block/CreateActivity"
+	Block_AdminActivityList_FullMethodName          = "/block.Block/AdminActivityList"
+	Block_StartActivity_FullMethodName              = "/block.Block/StartActivity"
 	Block_GetGoodsList_FullMethodName               = "/block.Block/GetGoodsList"
 	Block_JudgeBargain_FullMethodName               = "/block.Block/JudgeBargain"
 	Block_CryptominerFullPurchase_FullMethodName    = "/block.Block/CryptominerFullPurchase"
@@ -39,10 +43,16 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlockClient interface {
+	// 后台接口
 	Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 	CreateCryptominer(ctx context.Context, in *CreateCryptominerRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
 	CreateProp(ctx context.Context, in *CreatePropRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
+	AdminGoodList(ctx context.Context, in *AdminGoodListRequest, opts ...grpc.CallOption) (*AdminGoodListResponse, error)
+	StartGood(ctx context.Context, in *StartGoodRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
 	CreateActivity(ctx context.Context, in *CreateActivityRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
+	AdminActivityList(ctx context.Context, in *AdminActivityListRequest, opts ...grpc.CallOption) (*AdminActivityListResponse, error)
+	StartActivity(ctx context.Context, in *StartActivityRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
+	// 前台接口
 	GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error)
 	JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error)
 	CryptominerFullPurchase(ctx context.Context, in *CryptominerPurchaseRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
@@ -51,6 +61,7 @@ type BlockClient interface {
 	GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error)
 	GetBargainCryptominer(ctx context.Context, in *GetBargainCryptominerRequest, opts ...grpc.CallOption) (*GetBargainCryptominerResponse, error)
 	GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error)
+	// 外部rpc接口
 	GetPurchaseRecord(ctx context.Context, in *GetPurchaseRecordRequest, opts ...grpc.CallOption) (*GetPurchaseRecordResponse, error)
 	JudgeGoodsPurchase(ctx context.Context, in *JudgeGoodsPurchaseRequest, opts ...grpc.CallOption) (*JudgeGoodsPurchaseResponse, error)
 }
@@ -90,9 +101,45 @@ func (c *blockClient) CreateProp(ctx context.Context, in *CreatePropRequest, opt
 	return out, nil
 }
 
+func (c *blockClient) AdminGoodList(ctx context.Context, in *AdminGoodListRequest, opts ...grpc.CallOption) (*AdminGoodListResponse, error) {
+	out := new(AdminGoodListResponse)
+	err := c.cc.Invoke(ctx, Block_AdminGoodList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) StartGood(ctx context.Context, in *StartGoodRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error) {
+	out := new(IsSuccessResponse)
+	err := c.cc.Invoke(ctx, Block_StartGood_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *blockClient) CreateActivity(ctx context.Context, in *CreateActivityRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error) {
 	out := new(IsSuccessResponse)
 	err := c.cc.Invoke(ctx, Block_CreateActivity_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) AdminActivityList(ctx context.Context, in *AdminActivityListRequest, opts ...grpc.CallOption) (*AdminActivityListResponse, error) {
+	out := new(AdminActivityListResponse)
+	err := c.cc.Invoke(ctx, Block_AdminActivityList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) StartActivity(ctx context.Context, in *StartActivityRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error) {
+	out := new(IsSuccessResponse)
+	err := c.cc.Invoke(ctx, Block_StartActivity_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -193,10 +240,16 @@ func (c *blockClient) JudgeGoodsPurchase(ctx context.Context, in *JudgeGoodsPurc
 // All implementations must embed UnimplementedBlockServer
 // for forward compatibility
 type BlockServer interface {
+	// 后台接口
 	Ping(context.Context, *Request) (*Response, error)
 	CreateCryptominer(context.Context, *CreateCryptominerRequest) (*IsSuccessResponse, error)
 	CreateProp(context.Context, *CreatePropRequest) (*IsSuccessResponse, error)
+	AdminGoodList(context.Context, *AdminGoodListRequest) (*AdminGoodListResponse, error)
+	StartGood(context.Context, *StartGoodRequest) (*IsSuccessResponse, error)
 	CreateActivity(context.Context, *CreateActivityRequest) (*IsSuccessResponse, error)
+	AdminActivityList(context.Context, *AdminActivityListRequest) (*AdminActivityListResponse, error)
+	StartActivity(context.Context, *StartActivityRequest) (*IsSuccessResponse, error)
+	// 前台接口
 	GetGoodsList(context.Context, *GetGoodsListRequest) (*GetGoodsListResponse, error)
 	JudgeBargain(context.Context, *JudgeBargainRequest) (*JudgeBargainResponse, error)
 	CryptominerFullPurchase(context.Context, *CryptominerPurchaseRequest) (*IsSuccessResponse, error)
@@ -205,6 +258,7 @@ type BlockServer interface {
 	GetBargainRule(context.Context, *GetBargainRuleRequest) (*GetBargainRuleResponse, error)
 	GetBargainCryptominer(context.Context, *GetBargainCryptominerRequest) (*GetBargainCryptominerResponse, error)
 	GetBargainProgress(context.Context, *GetBargainProgressRequest) (*GetBargainProgressResponse, error)
+	// 外部rpc接口
 	GetPurchaseRecord(context.Context, *GetPurchaseRecordRequest) (*GetPurchaseRecordResponse, error)
 	JudgeGoodsPurchase(context.Context, *JudgeGoodsPurchaseRequest) (*JudgeGoodsPurchaseResponse, error)
 	mustEmbedUnimplementedBlockServer()
@@ -223,8 +277,20 @@ func (UnimplementedBlockServer) CreateCryptominer(context.Context, *CreateCrypto
 func (UnimplementedBlockServer) CreateProp(context.Context, *CreatePropRequest) (*IsSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProp not implemented")
 }
+func (UnimplementedBlockServer) AdminGoodList(context.Context, *AdminGoodListRequest) (*AdminGoodListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminGoodList not implemented")
+}
+func (UnimplementedBlockServer) StartGood(context.Context, *StartGoodRequest) (*IsSuccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartGood not implemented")
+}
 func (UnimplementedBlockServer) CreateActivity(context.Context, *CreateActivityRequest) (*IsSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateActivity not implemented")
+}
+func (UnimplementedBlockServer) AdminActivityList(context.Context, *AdminActivityListRequest) (*AdminActivityListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminActivityList not implemented")
+}
+func (UnimplementedBlockServer) StartActivity(context.Context, *StartActivityRequest) (*IsSuccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartActivity not implemented")
 }
 func (UnimplementedBlockServer) GetGoodsList(context.Context, *GetGoodsListRequest) (*GetGoodsListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGoodsList not implemented")
@@ -323,6 +389,42 @@ func _Block_CreateProp_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Block_AdminGoodList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGoodListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).AdminGoodList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_AdminGoodList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).AdminGoodList(ctx, req.(*AdminGoodListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_StartGood_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartGoodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).StartGood(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_StartGood_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).StartGood(ctx, req.(*StartGoodRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Block_CreateActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateActivityRequest)
 	if err := dec(in); err != nil {
@@ -337,6 +439,42 @@ func _Block_CreateActivity_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockServer).CreateActivity(ctx, req.(*CreateActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_AdminActivityList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminActivityListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).AdminActivityList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_AdminActivityList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).AdminActivityList(ctx, req.(*AdminActivityListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_StartActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).StartActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_StartActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).StartActivity(ctx, req.(*StartActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -541,8 +679,24 @@ var Block_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Block_CreateProp_Handler,
 		},
 		{
+			MethodName: "AdminGoodList",
+			Handler:    _Block_AdminGoodList_Handler,
+		},
+		{
+			MethodName: "StartGood",
+			Handler:    _Block_StartGood_Handler,
+		},
+		{
 			MethodName: "CreateActivity",
 			Handler:    _Block_CreateActivity_Handler,
+		},
+		{
+			MethodName: "AdminActivityList",
+			Handler:    _Block_AdminActivityList_Handler,
+		},
+		{
+			MethodName: "StartActivity",
+			Handler:    _Block_StartActivity_Handler,
 		},
 		{
 			MethodName: "GetGoodsList",

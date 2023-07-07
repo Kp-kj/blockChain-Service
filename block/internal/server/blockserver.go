@@ -22,6 +22,7 @@ func NewBlockServer(svcCtx *svc.ServiceContext) *BlockServer {
 	}
 }
 
+// 后台接口
 func (s *BlockServer) Ping(ctx context.Context, in *block.Request) (*block.Response, error) {
 	l := logic.NewPingLogic(ctx, s.svcCtx)
 	return l.Ping(in)
@@ -37,11 +38,32 @@ func (s *BlockServer) CreateProp(ctx context.Context, in *block.CreatePropReques
 	return l.CreateProp(in)
 }
 
+func (s *BlockServer) AdminGoodList(ctx context.Context, in *block.AdminGoodListRequest) (*block.AdminGoodListResponse, error) {
+	l := logic.NewAdminGoodListLogic(ctx, s.svcCtx)
+	return l.AdminGoodList(in)
+}
+
+func (s *BlockServer) StartGood(ctx context.Context, in *block.StartGoodRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewStartGoodLogic(ctx, s.svcCtx)
+	return l.StartGood(in)
+}
+
 func (s *BlockServer) CreateActivity(ctx context.Context, in *block.CreateActivityRequest) (*block.IsSuccessResponse, error) {
 	l := logic.NewCreateActivityLogic(ctx, s.svcCtx)
 	return l.CreateActivity(in)
 }
 
+func (s *BlockServer) AdminActivityList(ctx context.Context, in *block.AdminActivityListRequest) (*block.AdminActivityListResponse, error) {
+	l := logic.NewAdminActivityListLogic(ctx, s.svcCtx)
+	return l.AdminActivityList(in)
+}
+
+func (s *BlockServer) StartActivity(ctx context.Context, in *block.StartActivityRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewStartActivityLogic(ctx, s.svcCtx)
+	return l.StartActivity(in)
+}
+
+// 前台接口
 func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
 	l := logic.NewGetGoodsListLogic(ctx, s.svcCtx)
 	return l.GetGoodsList(in)
@@ -82,6 +104,7 @@ func (s *BlockServer) GetBargainProgress(ctx context.Context, in *block.GetBarga
 	return l.GetBargainProgress(in)
 }
 
+// 外部rpc接口
 func (s *BlockServer) GetPurchaseRecord(ctx context.Context, in *block.GetPurchaseRecordRequest) (*block.GetPurchaseRecordResponse, error) {
 	l := logic.NewGetPurchaseRecordLogic(ctx, s.svcCtx)
 	return l.GetPurchaseRecord(in)
