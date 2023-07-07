@@ -32,6 +32,7 @@ func (l *CryptominerFullPurchaseLogic) CryptominerFullPurchase(in *block.Cryptom
 	// 添加矿机属性
 	Cryptominer, err := l.svcCtx.CryptominerModel.FindOneByCryptominerId(l.ctx, in.CryptominerId)
 	if err != nil {
+		println("err.Error()1", err.Error())
 		logx.Error(err)
 		return nil, err
 	}
@@ -43,6 +44,7 @@ func (l *CryptominerFullPurchaseLogic) CryptominerFullPurchase(in *block.Cryptom
 
 	err = l.svcCtx.CryptominerModel.Update(l.ctx, Cryptominer)
 	if err != nil {
+		println("err.Error()1", err.Error())
 		logx.Error(err)
 		return nil, err
 	}
