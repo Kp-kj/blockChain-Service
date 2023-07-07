@@ -41,7 +41,7 @@ func (l *GetPurchaseRecordLogic) GetPurchaseRecord(in *block.GetPurchaseRecordRe
 			PurchaseWay:      onePurchaseRecord.PurchaseWay, // 购买方式 0：全额购买 1：限时砍价
 			GoodQuantity:     onePurchaseRecord.GoodQuantity,
 			PurchaseTime:     onePurchaseRecord.PurchaseTime.String(),
-			PurchasePrice:    onePurchaseRecord.PurchasePrice.Int64,
+			PurchasePrice:    float32(onePurchaseRecord.PurchasePrice.Float64),
 		}
 		PurchaseRecordBlock = append(PurchaseRecordBlock, purchaseRecord)
 	}

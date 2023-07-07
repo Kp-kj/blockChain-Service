@@ -19,15 +19,17 @@ var (
 	manageActivityFieldNames          = builder.RawFieldNames(&ManageActivity{})
 	manageActivityRows                = strings.Join(manageActivityFieldNames, ",")
 	manageActivityRowsExpectAutoSet   = strings.Join(stringx.Remove(manageActivityFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	manageActivityRowsWithPlaceHolder = strings.Join(stringx.Remove(manageActivityFieldNames, "`cryptominer_typeid`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	manageActivityRowsWithPlaceHolder = strings.Join(stringx.Remove(manageActivityFieldNames, "`activity_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 )
 
 type (
 	manageActivityModel interface {
 		Insert(ctx context.Context, data *ManageActivity) (sql.Result, error)
-		FindOne(ctx context.Context, cryptominerTypeid int64) (*ManageActivity, error)
+		FindOne(ctx context.Context, activityId int64) (*ManageActivity, error)
 		Update(ctx context.Context, data *ManageActivity) error
-		Delete(ctx context.Context, cryptominerTypeid int64) error
+		Delete(ctx context.Context, activityId int64) error
+		SelectActivityList(ctx context.Context) ([]*ManageActivity, error)
+		FindOneByCryptominerTypeid(ctx context.Context, cryptominerTypeid int64) (*ManageActivity, error)
 	}
 
 	defaultManageActivityModel struct {
@@ -36,6 +38,7 @@ type (
 	}
 
 	ManageActivity struct {
+		ActivityId        int64        `db:"activity_id"`
 		CryptominerTypeid int64        `db:"cryptominer_typeid"`
 		CreatedAt         time.Time    `db:"created_at"`
 		UpdatedAt         sql.NullTime `db:"updated_at"`
@@ -56,16 +59,16 @@ func newManageActivityModel(conn sqlx.SqlConn) *defaultManageActivityModel {
 	}
 }
 
-func (m *defaultManageActivityModel) Delete(ctx context.Context, cryptominerTypeid int64) error {
-	query := fmt.Sprintf("delete from %s where `cryptominer_typeid` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, cryptominerTypeid)
+func (m *defaultManageActivityModel) Delete(ctx context.Context, activityId int64) error {
+	query := fmt.Sprintf("delete from %s where `activity_id` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, activityId)
 	return err
 }
 
-func (m *defaultManageActivityModel) FindOne(ctx context.Context, cryptominerTypeid int64) (*ManageActivity, error) {
-	query := fmt.Sprintf("select %s from %s where `cryptominer_typeid` = ? limit 1", manageActivityRows, m.table)
+func (m *defaultManageActivityModel) FindOne(ctx context.Context, activityId int64) (*ManageActivity, error) {
+	query := fmt.Sprintf("select %s from %s where `activity_id` = ? limit 1", manageActivityRows, m.table)
 	var resp ManageActivity
-	err := m.conn.QueryRowCtx(ctx, &resp, query, cryptominerTypeid)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, activityId)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -77,15 +80,45 @@ func (m *defaultManageActivityModel) FindOne(ctx context.Context, cryptominerTyp
 }
 
 func (m *defaultManageActivityModel) Insert(ctx context.Context, data *ManageActivity) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageActivityRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageActivityRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.ActivityId, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation)
 	return ret, err
 }
 
 func (m *defaultManageActivityModel) Update(ctx context.Context, data *ManageActivity) error {
-	query := fmt.Sprintf("update %s set %s where `cryptominer_typeid` = ?", m.table, manageActivityRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation, data.CryptominerTypeid)
+	query := fmt.Sprintf("update %s set %s where `activity_id` = ?", m.table, manageActivityRowsWithPlaceHolder)
+	_, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation, data.ActivityId)
 	return err
+}
+
+func (m *defaultManageActivityModel) SelectActivityList(ctx context.Context) ([]*ManageActivity, error) {
+	query := fmt.Sprintf("select %s from %s ", manageActivityRows, m.table)
+	var resp []*ManageActivity
+	err := m.conn.QueryRowsCtx(ctx, &resp, query)
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		println("sqlerr")
+		return nil, ErrNotFound
+	default:
+		println("err")
+		return nil, err
+	}
+}
+
+func (m *defaultManageActivityModel) FindOneByCryptominerTypeid(ctx context.Context, cryptominerTypeid int64) (*ManageActivity, error) {
+	query := fmt.Sprintf("select %s from %s where `cryptominer_typeid` = ? and `is_activation` = 1 limit 1", manageActivityRows, m.table)
+	var resp ManageActivity
+	err := m.conn.QueryRowCtx(ctx, &resp, query, cryptominerTypeid)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultManageActivityModel) tableName() string {

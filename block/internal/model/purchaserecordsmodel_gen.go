@@ -50,7 +50,7 @@ type (
 		PurchaseWay      string         `db:"purchase_way"`
 		GoodQuantity     int64          `db:"good_quantity"`
 		PurchaseTime     time.Time      `db:"purchase_time"`
-		PurchasePrice    sql.NullInt64  `db:"purchase_price"`
+		PurchasePrice    sql.NullFloat64  `db:"purchase_price"`
 		PaymentWay       string     	`db:"payment_way"`
 	}
 )

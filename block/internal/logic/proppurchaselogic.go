@@ -38,7 +38,11 @@ func (l *PropPurchaseLogic) PropPurchase(in *block.PropPurchaseRequest) (*block.
 	Prop.PurchaseTime = sql.NullTime{Time: time.Now(), Valid: true}
 	Prop.OptionalStatus = "1" // 状态 0：未购买 1：已购买
 
-	l.svcCtx.PropModel.Update(l.ctx, Prop)
+	err = l.svcCtx.PropModel.Update(l.ctx, Prop)
+	if err != nil {
+		logx.Error(err)
+		return nil, err
+	}
 
 	// 添加购买记录
 	recordId, err := snowflake.NewNode(1)
@@ -54,7 +58,7 @@ func (l *PropPurchaseLogic) PropPurchase(in *block.PropPurchaseRequest) (*block.
 		PurchaseWay:      "0", // 购买方式 0：全额购买 1：限时砍价
 		GoodQuantity:     1,
 		PurchaseTime:     Prop.PurchaseTime.Time,
-		PurchasePrice:    sql.NullInt64{Int64: int64(Prop.PropPrice), Valid: true},
+		PurchasePrice:    sql.NullFloat64{Float64: float64(Prop.PropPrice), Valid: true},
 		PaymentWay:       Prop.PaymentWay,
 	}
 

@@ -13,6 +13,7 @@ type ServiceContext struct {
 	BillDetailsModel             model.BillDetailsModel
 	ManageCryptominerModel       model.ManageCryptominerModel
 	ManagePropModel              model.ManagePropModel
+	ManageActivityModel          model.ManageActivityModel
 	CryptominerModel             model.CryptominerModel
 	PropModel                    model.PropModel
 	UserCryptominerModel         model.UserCryptominerModel
@@ -32,6 +33,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		BillDetailsModel:             model.NewBillDetailsModel(sqlx.NewMysql(c.DB.DataSource)),
 		ManageCryptominerModel:       model.NewManageCryptominerModel(sqlx.NewMysql(c.DB.DataSource)),
 		ManagePropModel:              model.NewManagePropModel(sqlx.NewMysql(c.DB.DataSource)),
+		ManageActivityModel:          model.NewManageActivityModel(sqlx.NewMysql(c.DB.DataSource)),
 		CryptominerModel:             model.NewCryptominerModel(sqlx.NewMysql(c.DB.DataSource)),
 		PropModel:                    model.NewPropModel(sqlx.NewMysql(c.DB.DataSource)),
 		UserCryptominerModel:         model.NewUserCryptominerModel(sqlx.NewMysql(c.DB.DataSource)),

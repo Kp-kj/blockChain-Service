@@ -26,7 +26,7 @@ func NewGetGoodsListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetG
 func (l *GetGoodsListLogic) GetGoodsList(in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
 
 	// 创建实体矿机
-	ManageCryptominers, _ := l.svcCtx.ManageCryptominerModel.SelectAllCryptominer(l.ctx)
+	ManageCryptominers, _ := l.svcCtx.ManageCryptominerModel.SelectCryptominer(l.ctx)
 
 	var Cryptominers []*block.Cryptominer
 	for _, cryptominer := range ManageCryptominers {
@@ -103,7 +103,7 @@ func (l *GetGoodsListLogic) GetGoodsList(in *block.GetGoodsListRequest) (*block.
 	}
 
 	// 搜索用户道具库中是否存在
-	ManageProps, _ := l.svcCtx.ManagePropModel.SelectAllProp(l.ctx)
+	ManageProps, _ := l.svcCtx.ManagePropModel.SelectProp(l.ctx)
 	var Props []*block.Prop
 
 	for _, prop := range ManageProps {
