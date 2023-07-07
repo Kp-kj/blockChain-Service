@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -30,11 +31,13 @@ type (
 		Delete(ctx context.Context, propId int64) error
 		FindOneByPropId(ctx context.Context, propId int64) (*Prop, error)
 		FindPropInUser(ctx context.Context, userId int64, PropTypeid int64) (*Prop, error)
+		InsertManyProp(ctx context.Context, data []*Prop) (sql.Result, error)
 	}
 
 	defaultPropModel struct {
 		conn  sqlx.SqlConn
 		table string
+		db  *sql.DB
 	}
 
 	Prop struct {
@@ -86,10 +89,23 @@ func (m *defaultPropModel) Insert(ctx context.Context, data *Prop) (sql.Result, 
 	ret, err := m.conn.ExecCtx(ctx, query, data.PropId, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus)
 	return ret, err
 }
+func (m *defaultPropModel) InsertManyProp(ctx context.Context, data []*Prop) (sql.Result, error) {
+
+	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
+	var result sql.Result
+	for _, d := range data {
+		res, err := m.conn.ExecCtx(ctx,query, d.PropId, d.DeletedAt, d.UserId, d.PropTypeid, d.PropName, d.PropPicture, d.PropPrice, d.PaymentWay, d.PropDescribe, d.PurchaseTime, d.OptionalStatus)
+		if err != nil {
+			return nil, err
+		}
+		result = res
+	}
+
+	return result, nil
+}
 
 func (m *defaultPropModel) Update(ctx context.Context, data *Prop) error {
-	theRows := "`user_id`, `prop_typeid`, `prop_name`, `prop_picture`, `prop_price`, `payment_way`,`prop_describe`, `purchase_time`, `optional_status`,`prop_id`"
-	query := fmt.Sprintf("update %s set %s where `prop_id` = ?", m.table, theRows)
+	query := fmt.Sprintf("update %s set %s where `prop_id` = ?", m.table, propRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus, data.PropId)
 	return err
 }
@@ -121,6 +137,8 @@ func (m *defaultPropModel) FindPropInUser(ctx context.Context, userId int64, Pro
 		return nil, err
 	}
 }
+
+
 
 func (m *defaultPropModel) tableName() string {
 	return m.table
