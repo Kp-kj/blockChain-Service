@@ -17,16 +17,19 @@ import (
 var (
 	friendAssistanceFieldNames          = builder.RawFieldNames(&FriendAssistance{})
 	friendAssistanceRows                = strings.Join(friendAssistanceFieldNames, ",")
-	friendAssistanceRowsExpectAutoSet   = strings.Join(stringx.Remove(friendAssistanceFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	friendAssistanceRowsWithPlaceHolder = strings.Join(stringx.Remove(friendAssistanceFieldNames, "`bargain_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	friendAssistanceRowsExpectAutoSet   = strings.Join(stringx.Remove(friendAssistanceFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	friendAssistanceRowsWithPlaceHolder = strings.Join(stringx.Remove(friendAssistanceFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 )
 
 type (
 	friendAssistanceModel interface {
 		Insert(ctx context.Context, data *FriendAssistance) (sql.Result, error)
 		FindOne(ctx context.Context, bargainId int64) (*FriendAssistance, error)
+		FindOneById(ctx context.Context, id int64) (*FriendAssistance, error)
 		Update(ctx context.Context, data *FriendAssistance) error
 		Delete(ctx context.Context, bargainId int64) error
+		FindOneAssistanceRecord(ctx context.Context, bargainId int64) ([]*FriendAssistance, error)
+		FindUserAssistanceRecord(ctx context.Context, bargainId int64,userId int64) (*FriendAssistance, error)
 	}
 
 	defaultFriendAssistanceModel struct {
@@ -36,9 +39,11 @@ type (
 
 	FriendAssistance struct {
 		BargainId    int64   `db:"bargain_id"`
+		Id           int64   `db:"id"`
 		UserId       int64   `db:"user_id"`
-		UserName     int64   `db:"user_name"`
-		Avatar       int64   `db:"avatar"`
+		UserName     string  `db:"user_name"`
+		TwitterName  string  `db:"twitter_name"`
+		Avatar       string  `db:"avatar"`
 		BargainPrice float64 `db:"bargain_price"`
 	}
 )
@@ -50,9 +55,9 @@ func newFriendAssistanceModel(conn sqlx.SqlConn) *defaultFriendAssistanceModel {
 	}
 }
 
-func (m *defaultFriendAssistanceModel) Delete(ctx context.Context, bargainId int64) error {
-	query := fmt.Sprintf("delete from %s where `bargain_id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, bargainId)
+func (m *defaultFriendAssistanceModel) Delete(ctx context.Context, id int64) error {
+	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, id)
 	return err
 }
 
@@ -70,16 +75,58 @@ func (m *defaultFriendAssistanceModel) FindOne(ctx context.Context, bargainId in
 	}
 }
 
+func (m *defaultFriendAssistanceModel) FindOneById(ctx context.Context, id int64) (*FriendAssistance, error) {
+	var resp FriendAssistance
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", friendAssistanceRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultFriendAssistanceModel) Insert(ctx context.Context, data *FriendAssistance) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, friendAssistanceRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.UserId, data.UserName, data.Avatar, data.BargainPrice)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, friendAssistanceRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.UserId, data.UserName, data.TwitterName, data.Avatar, data.BargainPrice)
 	return ret, err
 }
 
-func (m *defaultFriendAssistanceModel) Update(ctx context.Context, data *FriendAssistance) error {
-	query := fmt.Sprintf("update %s set %s where `bargain_id` = ?", m.table, friendAssistanceRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.UserId, data.UserName, data.Avatar, data.BargainPrice, data.BargainId)
+func (m *defaultFriendAssistanceModel) Update(ctx context.Context, newData *FriendAssistance) error {
+	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, friendAssistanceRowsWithPlaceHolder)
+	_, err := m.conn.ExecCtx(ctx, query, newData.BargainId, newData.UserId, newData.UserName, newData.TwitterName, newData.Avatar, newData.BargainPrice, newData.Id)
 	return err
+}
+
+func (m *defaultFriendAssistanceModel) FindOneAssistanceRecord(ctx context.Context, bargainId int64) ([]*FriendAssistance, error) {
+	query := fmt.Sprintf("select %s from %s where `bargain_id` = ? ", friendAssistanceRows, m.table)
+	var resp []*FriendAssistance
+	err := m.conn.QueryRowsCtx(ctx, &resp, query, bargainId)
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultFriendAssistanceModel) FindUserAssistanceRecord(ctx context.Context,bargainId int64,userId int64) (*FriendAssistance, error) {
+	query := fmt.Sprintf("select %s from %s where `bargain_id` = ? and `user_id` = ? limit 1", friendAssistanceRows, m.table)
+	var resp FriendAssistance
+	err := m.conn.QueryRowCtx(ctx, &resp, query, bargainId,userId)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultFriendAssistanceModel) tableName() string {
