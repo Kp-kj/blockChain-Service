@@ -4,7 +4,6 @@ import (
 	"block/block"
 	"block/internal/svc"
 	"context"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -25,7 +24,7 @@ func NewGetPurchaseRecordLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 func (l *GetPurchaseRecordLogic) GetPurchaseRecord(in *block.GetPurchaseRecordRequest) (*block.GetPurchaseRecordResponse, error) {
 
 	record, err := l.svcCtx.PurchaseRecordsModel.FindAllPurchaseRecord(l.ctx, in.UserId)
-	if err == nil {
+	if err != nil {
 		logx.Error(err)
 		return nil, err
 	}
@@ -42,6 +41,7 @@ func (l *GetPurchaseRecordLogic) GetPurchaseRecord(in *block.GetPurchaseRecordRe
 			GoodQuantity:     onePurchaseRecord.GoodQuantity,
 			PurchaseTime:     onePurchaseRecord.PurchaseTime.String(),
 			PurchasePrice:    float32(onePurchaseRecord.PurchasePrice.Float64),
+			PaymentWay:       onePurchaseRecord.PaymentWay,
 		}
 		PurchaseRecordBlock = append(PurchaseRecordBlock, purchaseRecord)
 	}

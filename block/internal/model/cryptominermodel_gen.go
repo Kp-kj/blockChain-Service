@@ -30,6 +30,7 @@ type (
 		Delete(ctx context.Context, cryptominerId int64) error
 		FindOneByCryptominerId(ctx context.Context, cryptominerId int64) (*Cryptominer, error)
 		FindCryptominerInUser(ctx context.Context, userId int64, CryptominerTypeid int64) (*Cryptominer, error)
+		FindUserCryptominers(ctx context.Context, userId int64) ([]*Cryptominer, error)
 	}
 
 	defaultCryptominerModel struct {
@@ -46,7 +47,7 @@ type (
 		CryptominerTypeid    int64          `db:"cryptominer_typeid"`
 		CryptominerName      string         `db:"cryptominer_name"`
 		CryptominerPicture   sql.NullString `db:"cryptominer_picture"`
-		CryptominerPrice     int64          `db:"cryptominer_price"`
+		CryptominerPrice     int64        `db:"cryptominer_price"`
 		PaymentWay           string         `db:"payment_way"`
 		CryptominerDescribe  sql.NullString `db:"cryptominer_describe"`
 		IsBargain            int64          `db:"is_bargain"`
@@ -121,6 +122,20 @@ func (m *defaultCryptominerModel) FindCryptominerInUser(ctx context.Context, use
 	switch err {
 	case nil:
 		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultCryptominerModel) FindUserCryptominers(ctx context.Context, userId int64) ([]*Cryptominer, error) {
+	var resp []*Cryptominer
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and(`optional_status` = ? or `optional_status` = ?) ", cryptominerRows, m.table)
+	err := m.conn.QueryRowsCtx(ctx, &resp, query, userId,"1","2")
+	switch err {
+	case nil:
+		return resp, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:

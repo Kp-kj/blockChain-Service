@@ -28,22 +28,24 @@ const (
 	Block_AdminActivityList_FullMethodName          = "/block.Block/AdminActivityList"
 	Block_StartActivity_FullMethodName              = "/block.Block/StartActivity"
 	Block_GetGoodsList_FullMethodName               = "/block.Block/GetGoodsList"
+	Block_GetPurchaseRecord_FullMethodName          = "/block.Block/GetPurchaseRecord"
 	Block_JudgeBargain_FullMethodName               = "/block.Block/JudgeBargain"
 	Block_CryptominerFullPurchase_FullMethodName    = "/block.Block/CryptominerFullPurchase"
-	Block_CryptominerBargainPurchase_FullMethodName = "/block.Block/CryptominerBargainPurchase"
 	Block_PropPurchase_FullMethodName               = "/block.Block/PropPurchase"
-	Block_GetBargainRule_FullMethodName             = "/block.Block/GetBargainRule"
-	Block_GetBargainCryptominer_FullMethodName      = "/block.Block/GetBargainCryptominer"
-	Block_GetBargainProgress_FullMethodName         = "/block.Block/GetBargainProgress"
-	Block_GetPurchaseRecord_FullMethodName          = "/block.Block/GetPurchaseRecord"
+	Block_CryptominerBargainPurchase_FullMethodName = "/block.Block/CryptominerBargainPurchase"
+	Block_AssistorBargain_FullMethodName            = "/block.Block/AssistorBargain"
+	Block_GetBargainRecord_FullMethodName           = "/block.Block/GetBargainRecord"
+	Block_BargainPay_FullMethodName                 = "/block.Block/BargainPay"
 	Block_JudgeGoodsPurchase_FullMethodName         = "/block.Block/JudgeGoodsPurchase"
+	Block_GetUserCryptominerStatus_FullMethodName   = "/block.Block/GetUserCryptominerStatus"
+	Block_GetUserPropStatus_FullMethodName          = "/block.Block/GetUserPropStatus"
 )
 
 // BlockClient is the client API for Block service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlockClient interface {
-	// 后台接口
+	// 管理后台接口
 	Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 	CreateCryptominer(ctx context.Context, in *CreateCryptominerRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
 	CreateProp(ctx context.Context, in *CreatePropRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
@@ -52,18 +54,20 @@ type BlockClient interface {
 	CreateActivity(ctx context.Context, in *CreateActivityRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
 	AdminActivityList(ctx context.Context, in *AdminActivityListRequest, opts ...grpc.CallOption) (*AdminActivityListResponse, error)
 	StartActivity(ctx context.Context, in *StartActivityRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
-	// 前台接口
+	// PC接口
 	GetGoodsList(ctx context.Context, in *GetGoodsListRequest, opts ...grpc.CallOption) (*GetGoodsListResponse, error)
+	GetPurchaseRecord(ctx context.Context, in *GetPurchaseRecordRequest, opts ...grpc.CallOption) (*GetPurchaseRecordResponse, error)
 	JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error)
 	CryptominerFullPurchase(ctx context.Context, in *CryptominerPurchaseRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
-	CryptominerBargainPurchase(ctx context.Context, in *CryptominerBargainRequest, opts ...grpc.CallOption) (*CryptominerBargainResponse, error)
 	PropPurchase(ctx context.Context, in *PropPurchaseRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
-	GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error)
-	GetBargainCryptominer(ctx context.Context, in *GetBargainCryptominerRequest, opts ...grpc.CallOption) (*GetBargainCryptominerResponse, error)
-	GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error)
+	CryptominerBargainPurchase(ctx context.Context, in *CryptominerBargainRequest, opts ...grpc.CallOption) (*CryptominerBargainResponse, error)
+	AssistorBargain(ctx context.Context, in *AssistorBargainRequest, opts ...grpc.CallOption) (*AssistorBargainResponse, error)
+	GetBargainRecord(ctx context.Context, in *GetBargainRecordRequest, opts ...grpc.CallOption) (*GetBargainRecordResponse, error)
+	BargainPay(ctx context.Context, in *BargainPayRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error)
 	// 外部rpc接口
-	GetPurchaseRecord(ctx context.Context, in *GetPurchaseRecordRequest, opts ...grpc.CallOption) (*GetPurchaseRecordResponse, error)
 	JudgeGoodsPurchase(ctx context.Context, in *JudgeGoodsPurchaseRequest, opts ...grpc.CallOption) (*JudgeGoodsPurchaseResponse, error)
+	GetUserCryptominerStatus(ctx context.Context, in *GetUserCryptominerStatusRequest, opts ...grpc.CallOption) (*GetUserCryptominerStatusResponse, error)
+	GetUserPropStatus(ctx context.Context, in *GetUserPropStatusRequest, opts ...grpc.CallOption) (*GetUserPropStatusResponse, error)
 }
 
 type blockClient struct {
@@ -155,6 +159,15 @@ func (c *blockClient) GetGoodsList(ctx context.Context, in *GetGoodsListRequest,
 	return out, nil
 }
 
+func (c *blockClient) GetPurchaseRecord(ctx context.Context, in *GetPurchaseRecordRequest, opts ...grpc.CallOption) (*GetPurchaseRecordResponse, error) {
+	out := new(GetPurchaseRecordResponse)
+	err := c.cc.Invoke(ctx, Block_GetPurchaseRecord_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *blockClient) JudgeBargain(ctx context.Context, in *JudgeBargainRequest, opts ...grpc.CallOption) (*JudgeBargainResponse, error) {
 	out := new(JudgeBargainResponse)
 	err := c.cc.Invoke(ctx, Block_JudgeBargain_FullMethodName, in, out, opts...)
@@ -173,15 +186,6 @@ func (c *blockClient) CryptominerFullPurchase(ctx context.Context, in *Cryptomin
 	return out, nil
 }
 
-func (c *blockClient) CryptominerBargainPurchase(ctx context.Context, in *CryptominerBargainRequest, opts ...grpc.CallOption) (*CryptominerBargainResponse, error) {
-	out := new(CryptominerBargainResponse)
-	err := c.cc.Invoke(ctx, Block_CryptominerBargainPurchase_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *blockClient) PropPurchase(ctx context.Context, in *PropPurchaseRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error) {
 	out := new(IsSuccessResponse)
 	err := c.cc.Invoke(ctx, Block_PropPurchase_FullMethodName, in, out, opts...)
@@ -191,36 +195,36 @@ func (c *blockClient) PropPurchase(ctx context.Context, in *PropPurchaseRequest,
 	return out, nil
 }
 
-func (c *blockClient) GetBargainRule(ctx context.Context, in *GetBargainRuleRequest, opts ...grpc.CallOption) (*GetBargainRuleResponse, error) {
-	out := new(GetBargainRuleResponse)
-	err := c.cc.Invoke(ctx, Block_GetBargainRule_FullMethodName, in, out, opts...)
+func (c *blockClient) CryptominerBargainPurchase(ctx context.Context, in *CryptominerBargainRequest, opts ...grpc.CallOption) (*CryptominerBargainResponse, error) {
+	out := new(CryptominerBargainResponse)
+	err := c.cc.Invoke(ctx, Block_CryptominerBargainPurchase_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockClient) GetBargainCryptominer(ctx context.Context, in *GetBargainCryptominerRequest, opts ...grpc.CallOption) (*GetBargainCryptominerResponse, error) {
-	out := new(GetBargainCryptominerResponse)
-	err := c.cc.Invoke(ctx, Block_GetBargainCryptominer_FullMethodName, in, out, opts...)
+func (c *blockClient) AssistorBargain(ctx context.Context, in *AssistorBargainRequest, opts ...grpc.CallOption) (*AssistorBargainResponse, error) {
+	out := new(AssistorBargainResponse)
+	err := c.cc.Invoke(ctx, Block_AssistorBargain_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockClient) GetBargainProgress(ctx context.Context, in *GetBargainProgressRequest, opts ...grpc.CallOption) (*GetBargainProgressResponse, error) {
-	out := new(GetBargainProgressResponse)
-	err := c.cc.Invoke(ctx, Block_GetBargainProgress_FullMethodName, in, out, opts...)
+func (c *blockClient) GetBargainRecord(ctx context.Context, in *GetBargainRecordRequest, opts ...grpc.CallOption) (*GetBargainRecordResponse, error) {
+	out := new(GetBargainRecordResponse)
+	err := c.cc.Invoke(ctx, Block_GetBargainRecord_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockClient) GetPurchaseRecord(ctx context.Context, in *GetPurchaseRecordRequest, opts ...grpc.CallOption) (*GetPurchaseRecordResponse, error) {
-	out := new(GetPurchaseRecordResponse)
-	err := c.cc.Invoke(ctx, Block_GetPurchaseRecord_FullMethodName, in, out, opts...)
+func (c *blockClient) BargainPay(ctx context.Context, in *BargainPayRequest, opts ...grpc.CallOption) (*IsSuccessResponse, error) {
+	out := new(IsSuccessResponse)
+	err := c.cc.Invoke(ctx, Block_BargainPay_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -236,11 +240,29 @@ func (c *blockClient) JudgeGoodsPurchase(ctx context.Context, in *JudgeGoodsPurc
 	return out, nil
 }
 
+func (c *blockClient) GetUserCryptominerStatus(ctx context.Context, in *GetUserCryptominerStatusRequest, opts ...grpc.CallOption) (*GetUserCryptominerStatusResponse, error) {
+	out := new(GetUserCryptominerStatusResponse)
+	err := c.cc.Invoke(ctx, Block_GetUserCryptominerStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockClient) GetUserPropStatus(ctx context.Context, in *GetUserPropStatusRequest, opts ...grpc.CallOption) (*GetUserPropStatusResponse, error) {
+	out := new(GetUserPropStatusResponse)
+	err := c.cc.Invoke(ctx, Block_GetUserPropStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BlockServer is the server API for Block service.
 // All implementations must embed UnimplementedBlockServer
 // for forward compatibility
 type BlockServer interface {
-	// 后台接口
+	// 管理后台接口
 	Ping(context.Context, *Request) (*Response, error)
 	CreateCryptominer(context.Context, *CreateCryptominerRequest) (*IsSuccessResponse, error)
 	CreateProp(context.Context, *CreatePropRequest) (*IsSuccessResponse, error)
@@ -249,18 +271,20 @@ type BlockServer interface {
 	CreateActivity(context.Context, *CreateActivityRequest) (*IsSuccessResponse, error)
 	AdminActivityList(context.Context, *AdminActivityListRequest) (*AdminActivityListResponse, error)
 	StartActivity(context.Context, *StartActivityRequest) (*IsSuccessResponse, error)
-	// 前台接口
+	// PC接口
 	GetGoodsList(context.Context, *GetGoodsListRequest) (*GetGoodsListResponse, error)
+	GetPurchaseRecord(context.Context, *GetPurchaseRecordRequest) (*GetPurchaseRecordResponse, error)
 	JudgeBargain(context.Context, *JudgeBargainRequest) (*JudgeBargainResponse, error)
 	CryptominerFullPurchase(context.Context, *CryptominerPurchaseRequest) (*IsSuccessResponse, error)
-	CryptominerBargainPurchase(context.Context, *CryptominerBargainRequest) (*CryptominerBargainResponse, error)
 	PropPurchase(context.Context, *PropPurchaseRequest) (*IsSuccessResponse, error)
-	GetBargainRule(context.Context, *GetBargainRuleRequest) (*GetBargainRuleResponse, error)
-	GetBargainCryptominer(context.Context, *GetBargainCryptominerRequest) (*GetBargainCryptominerResponse, error)
-	GetBargainProgress(context.Context, *GetBargainProgressRequest) (*GetBargainProgressResponse, error)
+	CryptominerBargainPurchase(context.Context, *CryptominerBargainRequest) (*CryptominerBargainResponse, error)
+	AssistorBargain(context.Context, *AssistorBargainRequest) (*AssistorBargainResponse, error)
+	GetBargainRecord(context.Context, *GetBargainRecordRequest) (*GetBargainRecordResponse, error)
+	BargainPay(context.Context, *BargainPayRequest) (*IsSuccessResponse, error)
 	// 外部rpc接口
-	GetPurchaseRecord(context.Context, *GetPurchaseRecordRequest) (*GetPurchaseRecordResponse, error)
 	JudgeGoodsPurchase(context.Context, *JudgeGoodsPurchaseRequest) (*JudgeGoodsPurchaseResponse, error)
+	GetUserCryptominerStatus(context.Context, *GetUserCryptominerStatusRequest) (*GetUserCryptominerStatusResponse, error)
+	GetUserPropStatus(context.Context, *GetUserPropStatusRequest) (*GetUserPropStatusResponse, error)
 	mustEmbedUnimplementedBlockServer()
 }
 
@@ -295,32 +319,38 @@ func (UnimplementedBlockServer) StartActivity(context.Context, *StartActivityReq
 func (UnimplementedBlockServer) GetGoodsList(context.Context, *GetGoodsListRequest) (*GetGoodsListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGoodsList not implemented")
 }
+func (UnimplementedBlockServer) GetPurchaseRecord(context.Context, *GetPurchaseRecordRequest) (*GetPurchaseRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPurchaseRecord not implemented")
+}
 func (UnimplementedBlockServer) JudgeBargain(context.Context, *JudgeBargainRequest) (*JudgeBargainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JudgeBargain not implemented")
 }
 func (UnimplementedBlockServer) CryptominerFullPurchase(context.Context, *CryptominerPurchaseRequest) (*IsSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CryptominerFullPurchase not implemented")
 }
-func (UnimplementedBlockServer) CryptominerBargainPurchase(context.Context, *CryptominerBargainRequest) (*CryptominerBargainResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CryptominerBargainPurchase not implemented")
-}
 func (UnimplementedBlockServer) PropPurchase(context.Context, *PropPurchaseRequest) (*IsSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PropPurchase not implemented")
 }
-func (UnimplementedBlockServer) GetBargainRule(context.Context, *GetBargainRuleRequest) (*GetBargainRuleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBargainRule not implemented")
+func (UnimplementedBlockServer) CryptominerBargainPurchase(context.Context, *CryptominerBargainRequest) (*CryptominerBargainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CryptominerBargainPurchase not implemented")
 }
-func (UnimplementedBlockServer) GetBargainCryptominer(context.Context, *GetBargainCryptominerRequest) (*GetBargainCryptominerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBargainCryptominer not implemented")
+func (UnimplementedBlockServer) AssistorBargain(context.Context, *AssistorBargainRequest) (*AssistorBargainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssistorBargain not implemented")
 }
-func (UnimplementedBlockServer) GetBargainProgress(context.Context, *GetBargainProgressRequest) (*GetBargainProgressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBargainProgress not implemented")
+func (UnimplementedBlockServer) GetBargainRecord(context.Context, *GetBargainRecordRequest) (*GetBargainRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBargainRecord not implemented")
 }
-func (UnimplementedBlockServer) GetPurchaseRecord(context.Context, *GetPurchaseRecordRequest) (*GetPurchaseRecordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPurchaseRecord not implemented")
+func (UnimplementedBlockServer) BargainPay(context.Context, *BargainPayRequest) (*IsSuccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BargainPay not implemented")
 }
 func (UnimplementedBlockServer) JudgeGoodsPurchase(context.Context, *JudgeGoodsPurchaseRequest) (*JudgeGoodsPurchaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JudgeGoodsPurchase not implemented")
+}
+func (UnimplementedBlockServer) GetUserCryptominerStatus(context.Context, *GetUserCryptominerStatusRequest) (*GetUserCryptominerStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserCryptominerStatus not implemented")
+}
+func (UnimplementedBlockServer) GetUserPropStatus(context.Context, *GetUserPropStatusRequest) (*GetUserPropStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserPropStatus not implemented")
 }
 func (UnimplementedBlockServer) mustEmbedUnimplementedBlockServer() {}
 
@@ -497,6 +527,24 @@ func _Block_GetGoodsList_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Block_GetPurchaseRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPurchaseRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetPurchaseRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetPurchaseRecord_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetPurchaseRecord(ctx, req.(*GetPurchaseRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Block_JudgeBargain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(JudgeBargainRequest)
 	if err := dec(in); err != nil {
@@ -533,24 +581,6 @@ func _Block_CryptominerFullPurchase_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Block_CryptominerBargainPurchase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CryptominerBargainRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BlockServer).CryptominerBargainPurchase(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Block_CryptominerBargainPurchase_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockServer).CryptominerBargainPurchase(ctx, req.(*CryptominerBargainRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Block_PropPurchase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropPurchaseRequest)
 	if err := dec(in); err != nil {
@@ -569,74 +599,74 @@ func _Block_PropPurchase_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Block_GetBargainRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBargainRuleRequest)
+func _Block_CryptominerBargainPurchase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CryptominerBargainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockServer).GetBargainRule(ctx, in)
+		return srv.(BlockServer).CryptominerBargainPurchase(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Block_GetBargainRule_FullMethodName,
+		FullMethod: Block_CryptominerBargainPurchase_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockServer).GetBargainRule(ctx, req.(*GetBargainRuleRequest))
+		return srv.(BlockServer).CryptominerBargainPurchase(ctx, req.(*CryptominerBargainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Block_GetBargainCryptominer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBargainCryptominerRequest)
+func _Block_AssistorBargain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssistorBargainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockServer).GetBargainCryptominer(ctx, in)
+		return srv.(BlockServer).AssistorBargain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Block_GetBargainCryptominer_FullMethodName,
+		FullMethod: Block_AssistorBargain_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockServer).GetBargainCryptominer(ctx, req.(*GetBargainCryptominerRequest))
+		return srv.(BlockServer).AssistorBargain(ctx, req.(*AssistorBargainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Block_GetBargainProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBargainProgressRequest)
+func _Block_GetBargainRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBargainRecordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockServer).GetBargainProgress(ctx, in)
+		return srv.(BlockServer).GetBargainRecord(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Block_GetBargainProgress_FullMethodName,
+		FullMethod: Block_GetBargainRecord_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockServer).GetBargainProgress(ctx, req.(*GetBargainProgressRequest))
+		return srv.(BlockServer).GetBargainRecord(ctx, req.(*GetBargainRecordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Block_GetPurchaseRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPurchaseRecordRequest)
+func _Block_BargainPay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BargainPayRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockServer).GetPurchaseRecord(ctx, in)
+		return srv.(BlockServer).BargainPay(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Block_GetPurchaseRecord_FullMethodName,
+		FullMethod: Block_BargainPay_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockServer).GetPurchaseRecord(ctx, req.(*GetPurchaseRecordRequest))
+		return srv.(BlockServer).BargainPay(ctx, req.(*BargainPayRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -655,6 +685,42 @@ func _Block_JudgeGoodsPurchase_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockServer).JudgeGoodsPurchase(ctx, req.(*JudgeGoodsPurchaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_GetUserCryptominerStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserCryptominerStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetUserCryptominerStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetUserCryptominerStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetUserCryptominerStatus(ctx, req.(*GetUserCryptominerStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Block_GetUserPropStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPropStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockServer).GetUserPropStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Block_GetUserPropStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockServer).GetUserPropStatus(ctx, req.(*GetUserPropStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -703,6 +769,10 @@ var Block_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Block_GetGoodsList_Handler,
 		},
 		{
+			MethodName: "GetPurchaseRecord",
+			Handler:    _Block_GetPurchaseRecord_Handler,
+		},
+		{
 			MethodName: "JudgeBargain",
 			Handler:    _Block_JudgeBargain_Handler,
 		},
@@ -711,32 +781,36 @@ var Block_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Block_CryptominerFullPurchase_Handler,
 		},
 		{
-			MethodName: "CryptominerBargainPurchase",
-			Handler:    _Block_CryptominerBargainPurchase_Handler,
-		},
-		{
 			MethodName: "PropPurchase",
 			Handler:    _Block_PropPurchase_Handler,
 		},
 		{
-			MethodName: "GetBargainRule",
-			Handler:    _Block_GetBargainRule_Handler,
+			MethodName: "CryptominerBargainPurchase",
+			Handler:    _Block_CryptominerBargainPurchase_Handler,
 		},
 		{
-			MethodName: "GetBargainCryptominer",
-			Handler:    _Block_GetBargainCryptominer_Handler,
+			MethodName: "AssistorBargain",
+			Handler:    _Block_AssistorBargain_Handler,
 		},
 		{
-			MethodName: "GetBargainProgress",
-			Handler:    _Block_GetBargainProgress_Handler,
+			MethodName: "GetBargainRecord",
+			Handler:    _Block_GetBargainRecord_Handler,
 		},
 		{
-			MethodName: "GetPurchaseRecord",
-			Handler:    _Block_GetPurchaseRecord_Handler,
+			MethodName: "BargainPay",
+			Handler:    _Block_BargainPay_Handler,
 		},
 		{
 			MethodName: "JudgeGoodsPurchase",
 			Handler:    _Block_JudgeGoodsPurchase_Handler,
+		},
+		{
+			MethodName: "GetUserCryptominerStatus",
+			Handler:    _Block_GetUserCryptominerStatus_Handler,
+		},
+		{
+			MethodName: "GetUserPropStatus",
+			Handler:    _Block_GetUserPropStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

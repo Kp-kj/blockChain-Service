@@ -22,7 +22,7 @@ func NewBlockServer(svcCtx *svc.ServiceContext) *BlockServer {
 	}
 }
 
-// 后台接口
+// 管理后台接口
 func (s *BlockServer) Ping(ctx context.Context, in *block.Request) (*block.Response, error) {
 	l := logic.NewPingLogic(ctx, s.svcCtx)
 	return l.Ping(in)
@@ -63,10 +63,15 @@ func (s *BlockServer) StartActivity(ctx context.Context, in *block.StartActivity
 	return l.StartActivity(in)
 }
 
-// 前台接口
+// PC接口
 func (s *BlockServer) GetGoodsList(ctx context.Context, in *block.GetGoodsListRequest) (*block.GetGoodsListResponse, error) {
 	l := logic.NewGetGoodsListLogic(ctx, s.svcCtx)
 	return l.GetGoodsList(in)
+}
+
+func (s *BlockServer) GetPurchaseRecord(ctx context.Context, in *block.GetPurchaseRecordRequest) (*block.GetPurchaseRecordResponse, error) {
+	l := logic.NewGetPurchaseRecordLogic(ctx, s.svcCtx)
+	return l.GetPurchaseRecord(in)
 }
 
 func (s *BlockServer) JudgeBargain(ctx context.Context, in *block.JudgeBargainRequest) (*block.JudgeBargainResponse, error) {
@@ -79,38 +84,43 @@ func (s *BlockServer) CryptominerFullPurchase(ctx context.Context, in *block.Cry
 	return l.CryptominerFullPurchase(in)
 }
 
-func (s *BlockServer) CryptominerBargainPurchase(ctx context.Context, in *block.CryptominerBargainRequest) (*block.CryptominerBargainResponse, error) {
-	l := logic.NewCryptominerBargainPurchaseLogic(ctx, s.svcCtx)
-	return l.CryptominerBargainPurchase(in)
-}
-
 func (s *BlockServer) PropPurchase(ctx context.Context, in *block.PropPurchaseRequest) (*block.IsSuccessResponse, error) {
 	l := logic.NewPropPurchaseLogic(ctx, s.svcCtx)
 	return l.PropPurchase(in)
 }
 
-func (s *BlockServer) GetBargainRule(ctx context.Context, in *block.GetBargainRuleRequest) (*block.GetBargainRuleResponse, error) {
-	l := logic.NewGetBargainRuleLogic(ctx, s.svcCtx)
-	return l.GetBargainRule(in)
+func (s *BlockServer) CryptominerBargainPurchase(ctx context.Context, in *block.CryptominerBargainRequest) (*block.CryptominerBargainResponse, error) {
+	l := logic.NewCryptominerBargainPurchaseLogic(ctx, s.svcCtx)
+	return l.CryptominerBargainPurchase(in)
 }
 
-func (s *BlockServer) GetBargainCryptominer(ctx context.Context, in *block.GetBargainCryptominerRequest) (*block.GetBargainCryptominerResponse, error) {
-	l := logic.NewGetBargainCryptominerLogic(ctx, s.svcCtx)
-	return l.GetBargainCryptominer(in)
+func (s *BlockServer) AssistorBargain(ctx context.Context, in *block.AssistorBargainRequest) (*block.AssistorBargainResponse, error) {
+	l := logic.NewAssistorBargainLogic(ctx, s.svcCtx)
+	return l.AssistorBargain(in)
 }
 
-func (s *BlockServer) GetBargainProgress(ctx context.Context, in *block.GetBargainProgressRequest) (*block.GetBargainProgressResponse, error) {
-	l := logic.NewGetBargainProgressLogic(ctx, s.svcCtx)
-	return l.GetBargainProgress(in)
+func (s *BlockServer) GetBargainRecord(ctx context.Context, in *block.GetBargainRecordRequest) (*block.GetBargainRecordResponse, error) {
+	l := logic.NewGetBargainRecordLogic(ctx, s.svcCtx)
+	return l.GetBargainRecord(in)
+}
+
+func (s *BlockServer) BargainPay(ctx context.Context, in *block.BargainPayRequest) (*block.IsSuccessResponse, error) {
+	l := logic.NewBargainPayLogic(ctx, s.svcCtx)
+	return l.BargainPay(in)
 }
 
 // 外部rpc接口
-func (s *BlockServer) GetPurchaseRecord(ctx context.Context, in *block.GetPurchaseRecordRequest) (*block.GetPurchaseRecordResponse, error) {
-	l := logic.NewGetPurchaseRecordLogic(ctx, s.svcCtx)
-	return l.GetPurchaseRecord(in)
-}
-
 func (s *BlockServer) JudgeGoodsPurchase(ctx context.Context, in *block.JudgeGoodsPurchaseRequest) (*block.JudgeGoodsPurchaseResponse, error) {
 	l := logic.NewJudgeGoodsPurchaseLogic(ctx, s.svcCtx)
 	return l.JudgeGoodsPurchase(in)
+}
+
+func (s *BlockServer) GetUserCryptominerStatus(ctx context.Context, in *block.GetUserCryptominerStatusRequest) (*block.GetUserCryptominerStatusResponse, error) {
+	l := logic.NewGetUserCryptominerStatusLogic(ctx, s.svcCtx)
+	return l.GetUserCryptominerStatus(in)
+}
+
+func (s *BlockServer) GetUserPropStatus(ctx context.Context, in *block.GetUserPropStatusRequest) (*block.GetUserPropStatusResponse, error) {
+	l := logic.NewGetUserPropStatusLogic(ctx, s.svcCtx)
+	return l.GetUserPropStatus(in)
 }

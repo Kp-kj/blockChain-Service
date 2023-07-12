@@ -2,6 +2,7 @@
 -- 创建 ManageCryptominer 管理系统矿机表
 CREATE TABLE `manage_cryptominer` (
       `cryptominer_typeid` bigint(20) NOT NULL,        -- 矿机种类 根据管理系统生成的金银矿机种类（雪花算法）分类
+      `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
       `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
       `updated_at` datetime DEFAULT NULL,
       `deleted_at` datetime DEFAULT NULL,
@@ -20,6 +21,7 @@ CREATE TABLE `manage_cryptominer` (
 -- 创建 ManageProp 管理系统道具表
 CREATE TABLE `manage_prop` (
        `prop_typeid` bigint(20) NOT NULL,         -- 道具种类 根据管理系统生成的道具种类（雪花算法）分类，目前只有能量水
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
        `updated_at` datetime DEFAULT NULL,
        `deleted_at` datetime DEFAULT NULL,
@@ -36,6 +38,7 @@ CREATE TABLE `manage_prop` (
 -- 创建 ManageActivity 管理系统活动表(关联矿机)
 CREATE TABLE `manage_activity` (
        `activity_id` bigint(20) NOT NULL,
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
        `cryptominer_typeid` bigint(20) NOT NULL,         -- 道具种类 根据管理系统生成的道具种类（雪花算法）分类，目前只有能量水
        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
        `updated_at` datetime DEFAULT NULL,
@@ -52,6 +55,7 @@ CREATE TABLE `manage_activity` (
 -- 创建 Cryptominer 矿机表
 CREATE TABLE `cryptominer` (
        `cryptominer_id` bigint(20) NOT NULL,
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
        `updated_at` datetime DEFAULT NULL,
        `deleted_at` datetime DEFAULT NULL,
@@ -81,6 +85,7 @@ CREATE TABLE `cryptominer` (
 -- 创建 Prop 道具表
 CREATE TABLE `prop` (
         `prop_id` bigint(20) NOT NULL,
+        `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
         `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
         `updated_at` datetime DEFAULT NULL,
         `deleted_at` datetime DEFAULT NULL,
@@ -98,35 +103,10 @@ CREATE TABLE `prop` (
         INDEX `idx_prop_typeid` (`prop_typeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 创建 UserCryptominer 用户矿机表
-CREATE TABLE `user_cryptominer` (
-        `user_id` bigint(20) ,
-        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-        `updated_at` datetime DEFAULT NULL,
-        `deleted_at` datetime DEFAULT NULL,
-        `cryptominer_amount` int NOT NULL,
-        `cryptominer_typeid` bigint(20) NOT NULL,   -- 矿机种类 根据管理系统生成的金银矿机种类（雪花算法）分类
-        PRIMARY KEY (`user_id`),
-        UNIQUE KEY `idx_user_id` (`user_id`),
-        INDEX `idx_cryptominer_typeid` (`cryptominer_typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 UserProp 用户道具表
-CREATE TABLE `user_prop` (
-         `user_id` bigint(20) ,
-         `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-         `updated_at` datetime DEFAULT NULL,
-         `deleted_at` datetime DEFAULT NULL,
-         `prop_amount` int NOT NULL,
-         `prop_typeid` bigint(20) NOT NULL,         -- 道具种类 根据管理系统生成的道具种类（雪花算法）分类，目前只有能量水
-         PRIMARY KEY (`user_id`),
-         UNIQUE KEY `idx_user_id` (`user_id`),
-         INDEX `idx_prop_typeid` (`prop_typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- 创建 PurchaseRecord 商品购买记录表
 CREATE TABLE `purchase_records` (
         `user_id` bigint(20) NOT NULL,
+        `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
         `purchase_record_id` bigint(20) NOT NULL,          -- 购买记录id
         `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
         `updated_at` datetime DEFAULT NULL,
@@ -147,77 +127,35 @@ CREATE TABLE `purchase_records` (
 -- 创建 bargain 砍价表
 CREATE TABLE `bargain` (
        `bargain_id` bigint(20) NOT NULL,
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
+       `user_id` bigint(20) NOT NULL,
        `cryptominer_id` bigint(20) NOT NULL,
        `cryptominer_typeid` bigint(20) NOT NULL,          -- 矿机种类 根据管理系统生成的金银矿机种类（雪花算法）分类
        `cryptominer_price` int NOT NULL,
        `remaining_price` decimal(10,2) NOT NULL,        -- 剩余金额
        `activity_start_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
        `activity_end_time` datetime NULL,
+       `unused_data` varchar(512) NOT NULL,
+       `used_data` varchar(512) NOT NULL,
        PRIMARY KEY (`bargain_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 创建 bargain 砍价规则表
+CREATE TABLE `bargain_rule` (
+       `id` bigint(20) NOT NULL,
+       `bargain_rule` varchar(256) NOT NULL,
+       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 创建 friend_assistance 好友助力表
 CREATE TABLE `friend_assistance` (
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
        `bargain_id` bigint(20) NOT NULL,
        `user_id` bigint(20) NOT NULL,
-       `user_name` bigint(20) NOT NULL,
-       `avatar` int NOT NULL,
+       `user_name` varchar(256) NOT NULL,
+       `twitter_name` varchar(256) NOT NULL,
+       `avatar` varchar(256) NOT NULL,
        `bargain_price` decimal(10,2) NOT NULL,
-       PRIMARY KEY (`bargain_id`)
+       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 创建 BargainAmount 砍价额度表
-CREATE TABLE `bargain_amount` (
-          `bargain_id` bigint(20) NOT NULL,
-          `first_bargain_percentage` decimal(10,2) NOT NULL,
-          `bargain_min_price` decimal(10,2) NOT NULL,
-          `bargain_price` decimal(10,2) NOT NULL,
-          PRIMARY KEY (`bargain_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 wallet 钱包表
-CREATE TABLE `wallets` (
-       `user_id` bigint(20) NOT NULL,
-       `holding_quantity` decimal NOT NULL,
-       `available_quantity` decimal NOT NULL,
-       `frozen_quantity` decimal NOT NULL,
-       `accumulated_reward` decimal NOT NULL,
-       `accumulated_expense` decimal NOT NULL,
-       PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 bill_detail 账单明细表
-CREATE TABLE `bill_details` (
-        `user_id` bigint(20) NOT NULL,
-        `getType` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
-        `getTime` datetime NOT NULL,
-        `getQuantity` decimal NOT NULL,
-        PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 yesterday_bill 昨日账单表
-CREATE TABLE `yesterday_bill` (
-          `user_id` bigint(20) NOT NULL,
-          `yesterdayRewardQuantity` decimal NOT NULL,
-          `yesterdayExpenseQuantity` decimal NOT NULL,
-          PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 yesterday_reward_details 昨日收益明细表
-CREATE TABLE `yesterday_reward_details` (
-        `user_id` bigint(20) NOT NULL,
-        `rewardType` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
-        `rewardAmount` decimal NOT NULL,
-        `rewardTime` datetime NOT NULL,
-        PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 创建 yesterday_expense_details 昨日支出明细
-CREATE TABLE `yesterday_expense_details` (
-         `user_id` bigint(20) NOT NULL,
-         `expenseName` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
-         `itemQuantity` int NOT NULL,
-         `expenseAmount` decimal NOT NULL,
-         `expenseTime` datetime NOT NULL,
-         PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

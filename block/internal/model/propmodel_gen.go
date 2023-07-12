@@ -32,6 +32,7 @@ type (
 		FindOneByPropId(ctx context.Context, propId int64) (*Prop, error)
 		FindPropInUser(ctx context.Context, userId int64, PropTypeid int64) (*Prop, error)
 		InsertManyProp(ctx context.Context, data []*Prop) (sql.Result, error)
+		FindUserProps(ctx context.Context, userId int64) ([]*Prop, error)
 	}
 
 	defaultPropModel struct {
@@ -138,7 +139,19 @@ func (m *defaultPropModel) FindPropInUser(ctx context.Context, userId int64, Pro
 	}
 }
 
-
+func (m *defaultPropModel) FindUserProps(ctx context.Context, userId int64) ([]*Prop, error) {
+	var resp []*Prop
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `optional_status` = ? ", propRows, m.table)
+	err := m.conn.QueryRowsCtx(ctx, &resp, query, userId, "1")
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
 
 func (m *defaultPropModel) tableName() string {
 	return m.table

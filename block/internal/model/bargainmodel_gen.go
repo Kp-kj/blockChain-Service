@@ -26,8 +26,13 @@ type (
 	bargainModel interface {
 		Insert(ctx context.Context, data *Bargain) (sql.Result, error)
 		FindOne(ctx context.Context, bargainId int64) (*Bargain, error)
+		FindOneById(ctx context.Context, id int64) (*Bargain, error)
 		Update(ctx context.Context, data *Bargain) error
 		Delete(ctx context.Context, bargainId int64) error
+		FindBargainByUserId(ctx context.Context, userId int64,cryptominerTypeid int64) (*Bargain, error)
+		FindBargainByCryptominerId(ctx context.Context, userId int64,cryptominerId int64) (*Bargain, error)
+		FindBargainForRule(ctx context.Context, userId int64) (*Bargain, error)
+		FindBargainRecord(ctx context.Context, userId int64,bargainId int64) (*Bargain, error)
 	}
 
 	defaultBargainModel struct {
@@ -37,12 +42,16 @@ type (
 
 	Bargain struct {
 		BargainId         int64        `db:"bargain_id"`
+		Id                int64        `db:"id"`
+		UserId            int64        `db:"user_id"`
 		CryptominerId     int64        `db:"cryptominer_id"`
 		CryptominerTypeid int64        `db:"cryptominer_typeid"`
 		CryptominerPrice  int64        `db:"cryptominer_price"`
 		RemainingPrice    float64      `db:"remaining_price"`
 		ActivityStartTime time.Time    `db:"activity_start_time"`
 		ActivityEndTime   sql.NullTime `db:"activity_end_time"`
+		UnusedData        string       `db:"unused_data"`
+		UsedData          string       `db:"used_data"`
 	}
 )
 
@@ -73,16 +82,87 @@ func (m *defaultBargainModel) FindOne(ctx context.Context, bargainId int64) (*Ba
 	}
 }
 
+func (m *defaultBargainModel) FindOneById(ctx context.Context, id int64) (*Bargain, error) {
+	var resp Bargain
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", bargainRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultBargainModel) Insert(ctx context.Context, data *Bargain) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, bargainRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.CryptominerId, data.CryptominerTypeid, data.CryptominerPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, bargainRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.BargainId, data.Id, data.UserId, data.CryptominerId, data.CryptominerTypeid, data.CryptominerPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime, data.UnusedData, data.UsedData)
 	return ret, err
 }
 
-func (m *defaultBargainModel) Update(ctx context.Context, data *Bargain) error {
+func (m *defaultBargainModel) Update(ctx context.Context, newData *Bargain) error {
 	query := fmt.Sprintf("update %s set %s where `bargain_id` = ?", m.table, bargainRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.CryptominerId, data.CryptominerTypeid, data.CryptominerPrice, data.RemainingPrice, data.ActivityStartTime, data.ActivityEndTime, data.BargainId)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Id, newData.UserId, newData.CryptominerId, newData.CryptominerTypeid, newData.CryptominerPrice, newData.RemainingPrice, newData.ActivityStartTime, newData.ActivityEndTime, newData.UnusedData, newData.UsedData, newData.BargainId)
 	return err
+}
+
+func (m *defaultBargainModel) FindBargainByUserId(ctx context.Context, userId int64,cryptominerId int64) (*Bargain, error) {
+	var resp Bargain
+	today := time.Now().Format("2006-01-02")+"%"
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `cryptominer_typeid` = ?  and DATE(`activity_start_time`) like ? limit 1", bargainRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, cryptominerId, today)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultBargainModel) FindBargainByCryptominerId(ctx context.Context, userId int64,cryptominerId int64) (*Bargain, error) {
+	var resp Bargain
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `cryptominer_id` = ? limit 1", bargainRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, cryptominerId)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultBargainModel) FindBargainForRule(ctx context.Context, userId int64) (*Bargain, error) {
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", bargainRows, m.table)
+	var resp Bargain
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultBargainModel) FindBargainRecord(ctx context.Context, userId int64,bargainId int64) (*Bargain, error) {
+	var resp Bargain
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `bargain_id` = ? limit 1", bargainRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, bargainId)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultBargainModel) tableName() string {
