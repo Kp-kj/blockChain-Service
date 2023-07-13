@@ -26,6 +26,17 @@ func NewGetUserCryptominerStatusLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *GetUserCryptominerStatusLogic) GetUserCryptominerStatus(in *block.GetUserCryptominerStatusRequest) (*block.GetUserCryptominerStatusResponse, error) {
 
 	var UserCryptominers []*block.UserCryptominer
+	selectCryptominers, _ := l.svcCtx.CryptominerModel.FindUserLoseCryptominers(l.ctx, in.UserId)
+
+	for _, cryptominer := range selectCryptominers {
+		cryptominer.OptionalStatus = "2"
+		err := l.svcCtx.CryptominerModel.Update(l.ctx, cryptominer)
+		if err != nil {
+			logx.Error(err)
+			return nil, err
+		}
+	}
+
 	cryptominers, err := l.svcCtx.CryptominerModel.FindUserCryptominers(l.ctx, in.UserId)
 	if err != nil {
 		logx.Error(err)
