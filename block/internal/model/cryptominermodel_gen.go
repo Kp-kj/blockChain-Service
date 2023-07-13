@@ -31,6 +31,7 @@ type (
 		FindOneByCryptominerId(ctx context.Context, cryptominerId int64) (*Cryptominer, error)
 		FindCryptominerInUser(ctx context.Context, userId int64, CryptominerTypeid int64) (*Cryptominer, error)
 		FindUserCryptominers(ctx context.Context, userId int64) ([]*Cryptominer, error)
+		FindUserLoseCryptominers(ctx context.Context, userId int64) ([]*Cryptominer, error)
 	}
 
 	defaultCryptominerModel struct {
@@ -133,6 +134,21 @@ func (m *defaultCryptominerModel) FindUserCryptominers(ctx context.Context, user
 	var resp []*Cryptominer
 	query := fmt.Sprintf("select %s from %s where `user_id` = ? and(`optional_status` = ? or `optional_status` = ?) ", cryptominerRows, m.table)
 	err := m.conn.QueryRowsCtx(ctx, &resp, query, userId,"1","2")
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultCryptominerModel) FindUserLoseCryptominers(ctx context.Context, userId int64) ([]*Cryptominer, error) {
+	today := time.Now().Format("2006-01-02")
+	var resp []*Cryptominer
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and`optional_status` = ? and `cryptominer_end_time`< ?", cryptominerRows, m.table)
+	err := m.conn.QueryRowsCtx(ctx, &resp, query, userId,"1",today)
 	switch err {
 	case nil:
 		return resp, nil

@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	ActivateCryptominerRequest       = block.ActivateCryptominerRequest
+	ActivateCryptominerResponse      = block.ActivateCryptominerResponse
 	Activity                         = block.Activity
 	AdminActivityListRequest         = block.AdminActivityListRequest
 	AdminActivityListResponse        = block.AdminActivityListResponse
@@ -80,6 +82,7 @@ type (
 		JudgeGoodsPurchase(ctx context.Context, in *JudgeGoodsPurchaseRequest, opts ...grpc.CallOption) (*JudgeGoodsPurchaseResponse, error)
 		GetUserCryptominerStatus(ctx context.Context, in *GetUserCryptominerStatusRequest, opts ...grpc.CallOption) (*GetUserCryptominerStatusResponse, error)
 		GetUserPropStatus(ctx context.Context, in *GetUserPropStatusRequest, opts ...grpc.CallOption) (*GetUserPropStatusResponse, error)
+		ActivateCryptominer(ctx context.Context, in *ActivateCryptominerRequest, opts ...grpc.CallOption) (*ActivateCryptominerResponse, error)
 	}
 
 	defaultBlock struct {
@@ -194,4 +197,9 @@ func (m *defaultBlock) GetUserCryptominerStatus(ctx context.Context, in *GetUser
 func (m *defaultBlock) GetUserPropStatus(ctx context.Context, in *GetUserPropStatusRequest, opts ...grpc.CallOption) (*GetUserPropStatusResponse, error) {
 	client := block.NewBlockClient(m.cli.Conn())
 	return client.GetUserPropStatus(ctx, in, opts...)
+}
+
+func (m *defaultBlock) ActivateCryptominer(ctx context.Context, in *ActivateCryptominerRequest, opts ...grpc.CallOption) (*ActivateCryptominerResponse, error) {
+	client := block.NewBlockClient(m.cli.Conn())
+	return client.ActivateCryptominer(ctx, in, opts...)
 }

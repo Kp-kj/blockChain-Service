@@ -33,6 +33,8 @@ type (
 		FindPropInUser(ctx context.Context, userId int64, PropTypeid int64) (*Prop, error)
 		InsertManyProp(ctx context.Context, data []*Prop) (sql.Result, error)
 		FindUserProps(ctx context.Context, userId int64) ([]*Prop, error)
+		FindUserPropForGold(ctx context.Context, userId int64) ([]*Prop, error)
+		FindUserPropForSliver(ctx context.Context, userId int64) (*Prop, error)
 	}
 
 	defaultPropModel struct {
@@ -146,6 +148,34 @@ func (m *defaultPropModel) FindUserProps(ctx context.Context, userId int64) ([]*
 	switch err {
 	case nil:
 		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultPropModel) FindUserPropForGold(ctx context.Context, userId int64) ([]*Prop, error) {
+	var resp []*Prop
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `optional_status` = ? limit 2", propRows, m.table)
+	err := m.conn.QueryRowsCtx(ctx, &resp, query, userId, "1")
+	switch err {
+	case nil:
+		return resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultPropModel) FindUserPropForSliver(ctx context.Context, userId int64) (*Prop, error) {
+	var resp Prop
+	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `optional_status` = ? limit 1", propRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, "1")
+	switch err {
+	case nil:
+		return &resp, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:

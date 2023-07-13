@@ -257,7 +257,7 @@ message AssistorBargainResponse {
 // 矿机砍价支付
 message  BargainPayRequest{
   int64  user_id = 1;            // 用户id
-  int64  cryptominer_id = 3;     // 商品id
+  int64  cryptominer_id = 2;     // 商品id
 }
 
 // 任务--判断今日是否购买过
@@ -283,10 +283,10 @@ message  GetUserCryptominerStatusResponse{
 // 用户矿机
 message UserCryptominer{
   int64 cryptominer_id = 1;              // ID
-  string cryptominer_name = 4;           // 矿机名称
-  string cryptominer_picture = 5;        // 矿机图片
-  string optional_status = 8;            // 矿机状态 1：工作中 2：已失效
-  string cryptominer_end_time = 13;      // 矿机失效时间
+  string cryptominer_name = 2;           // 矿机名称
+  string cryptominer_picture = 3;        // 矿机图片
+  string optional_status = 4;            // 矿机状态 1：工作中 2：已失效
+  string cryptominer_end_time = 5;      // 矿机失效时间
 }
 
 // 钱包--获取道具状态
@@ -302,9 +302,22 @@ message  GetUserPropStatusResponse{
 // 用户道具
 message UserProp{
   int64 prop_id = 1;              // ID
-  string prop_name = 4;           // 道具名称
-  string prop_picture = 5;        // 道具图片
+  string prop_name = 2;           // 道具名称
+  string prop_picture = 3;        // 道具图片
 }
+
+// 钱包--激活矿机
+message  ActivateCryptominerRequest{
+  int64  user_id = 1;            // 用户id
+  int64  cryptominer_id = 2;     // 矿机id
+}
+
+// 钱包--激活矿机
+message  ActivateCryptominerResponse{
+  bool is_success = 1;     // 成功
+  bool prop_enough = 2;    // 能量水是否充足
+}
+
 
 //商城区
 service Block {
@@ -335,7 +348,7 @@ service Block {
   rpc JudgeGoodsPurchase(JudgeGoodsPurchaseRequest) returns(JudgeGoodsPurchaseResponse);                          // 任务--判断今日是否购买过
   rpc GetUserCryptominerStatus(GetUserCryptominerStatusRequest) returns(GetUserCryptominerStatusResponse);        // 钱包--获取矿机状态
   rpc GetUserPropStatus(GetUserPropStatusRequest) returns(GetUserPropStatusResponse);                             // 钱包--获取道具状态
-
+  rpc ActivateCryptominer(ActivateCryptominerRequest) returns(ActivateCryptominerResponse);                       // 钱包--激活矿机
 }
 
 

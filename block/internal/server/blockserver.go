@@ -124,3 +124,8 @@ func (s *BlockServer) GetUserPropStatus(ctx context.Context, in *block.GetUserPr
 	l := logic.NewGetUserPropStatusLogic(ctx, s.svcCtx)
 	return l.GetUserPropStatus(in)
 }
+
+func (s *BlockServer) ActivateCryptominer(ctx context.Context, in *block.ActivateCryptominerRequest) (*block.ActivateCryptominerResponse, error) {
+	l := logic.NewActivateCryptominerLogic(ctx, s.svcCtx)
+	return l.ActivateCryptominer(in)
+}
