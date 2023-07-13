@@ -17,6 +17,7 @@ type ServiceContext struct {
 	PurchaseRecordsModel   model.PurchaseRecordsModel
 	BargainRuleModel       model.BargainRuleModel
 	FriendAssistanceModel  model.FriendAssistanceModel
+	ChainConfigModel       model.ChainConfigModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -31,5 +32,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PurchaseRecordsModel:   model.NewPurchaseRecordsModel(sqlx.NewMysql(c.DB.DataSource)),
 		BargainRuleModel:       model.NewBargainRuleModel(sqlx.NewMysql(c.DB.DataSource)),
 		FriendAssistanceModel:  model.NewFriendAssistanceModel(sqlx.NewMysql(c.DB.DataSource)),
+		ChainConfigModel:       model.NewChainConfigModel(sqlx.NewMysql(c.DB.DataSource)),
 	}
 }

@@ -35,6 +35,8 @@ func (l *AdminGoodListLogic) AdminGoodList(in *block.AdminGoodListRequest) (*blo
 			PaymentWay:   cryptominer.PaymentWay,
 			PropPrice:    cryptominer.CryptominerPrice,
 			GoodStatus:   cryptominer.GoodStatus,
+			GoodType:     cryptominer.GoodType,
+			GoodPower:    cryptominer.CryptominerPower,
 		}
 		AdminGoodList = append(AdminGoodList, NewAdminGood)
 	}
@@ -47,6 +49,8 @@ func (l *AdminGoodListLogic) AdminGoodList(in *block.AdminGoodListRequest) (*blo
 			PaymentWay:   prop.PaymentWay,
 			PropPrice:    prop.PropPrice,
 			GoodStatus:   prop.GoodStatus,
+			GoodType:     prop.GoodType,
+			GoodPower:    0,
 		}
 		AdminGoodList = append(AdminGoodList, NewAdminGood)
 	}

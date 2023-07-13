@@ -40,6 +40,7 @@ type (
 
 	ManageCryptominer struct {
 		CryptominerTypeid   int64          `db:"cryptominer_typeid"`
+		Id                  int64          `db:"id"`
 		CreatedAt           time.Time      `db:"created_at"`
 		UpdatedAt           sql.NullTime   `db:"updated_at"`
 		DeletedAt           sql.NullTime   `db:"deleted_at"`
@@ -52,6 +53,7 @@ type (
 		CryptominerPower    int64          `db:"cryptominer_power"`
 		PaymentWay          string         `db:"payment_way"`
 		GoodStatus          string         `db:"good_status"`
+		GoodType            string         `db:"good_type"`
 	}
 )
 
@@ -83,14 +85,14 @@ func (m *defaultManageCryptominerModel) FindOne(ctx context.Context, cryptominer
 }
 
 func (m *defaultManageCryptominerModel) Insert(ctx context.Context, data *ManageCryptominer) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageCryptominerRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.GoodStatus)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageCryptominerRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.Id, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.GoodStatus, data.GoodType)
 	return ret, err
 }
 
-func (m *defaultManageCryptominerModel) Update(ctx context.Context, data *ManageCryptominer) error {
+func (m *defaultManageCryptominerModel) Update(ctx context.Context, newData *ManageCryptominer) error {
 	query := fmt.Sprintf("update %s set %s where `cryptominer_typeid` = ?", m.table, manageCryptominerRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.CryptominerName, data.CryptominerPicture, data.CryptominerDescribe, data.CryptominerPrice, data.CryptominerDuration, data.CryptominerPower, data.PaymentWay, data.GoodStatus, data.CryptominerTypeid)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Id, newData.DeletedAt, newData.AdminuserId, newData.CryptominerName, newData.CryptominerPicture, newData.CryptominerDescribe, newData.CryptominerPrice, newData.CryptominerDuration, newData.CryptominerPower, newData.PaymentWay, newData.GoodStatus, newData.GoodType, newData.CryptominerTypeid)
 	return err
 }
 

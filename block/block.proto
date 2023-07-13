@@ -97,6 +97,8 @@ message  AdminGood{
   string payment_way = 4;        // 支付方式 0：U ,1:ADF
   int64 prop_price = 5;          // 商品价格
   string good_status = 6;        // 商品状态  0：待上架  1：已上架 2：未上架
+  string good_type = 7;          // 商品类型  0：胡萝卜 1：能量水
+  int64 good_power = 8;          // 商品算力
 }
 
 // 获取商城列表

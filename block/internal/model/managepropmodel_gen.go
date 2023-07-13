@@ -40,6 +40,7 @@ type (
 
 	ManageProp struct {
 		PropTypeid   int64          `db:"prop_typeid"`
+		Id           int64          `db:"id"`
 		CreatedAt    time.Time      `db:"created_at"`
 		UpdatedAt    sql.NullTime   `db:"updated_at"`
 		DeletedAt    sql.NullTime   `db:"deleted_at"`
@@ -50,6 +51,7 @@ type (
 		PropPrice    int64          `db:"prop_price"`
 		PaymentWay   string         `db:"payment_way"`
 		GoodStatus   string         `db:"good_status"`
+		GoodType     string         `db:"good_type"`
 	}
 )
 
@@ -81,14 +83,14 @@ func (m *defaultManagePropModel) FindOne(ctx context.Context, propTypeid int64) 
 }
 
 func (m *defaultManagePropModel) Insert(ctx context.Context, data *ManageProp) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, managePropRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PropTypeid, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.GoodStatus)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, managePropRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PropTypeid, data.Id, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.GoodStatus, data.GoodType)
 	return ret, err
 }
 
-func (m *defaultManagePropModel) Update(ctx context.Context, data *ManageProp) error {
+func (m *defaultManagePropModel) Update(ctx context.Context, newData *ManageProp) error {
 	query := fmt.Sprintf("update %s set %s where `prop_typeid` = ?", m.table, managePropRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.AdminuserId, data.PropName, data.PropPicture, data.PropDescribe, data.PropPrice, data.PaymentWay, data.GoodStatus, data.PropTypeid)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Id, newData.DeletedAt, newData.AdminuserId, newData.PropName, newData.PropPicture, newData.PropDescribe, newData.PropPrice, newData.PaymentWay, newData.GoodStatus, newData.GoodType, newData.PropTypeid)
 	return err
 }
 
