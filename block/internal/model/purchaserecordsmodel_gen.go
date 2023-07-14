@@ -19,7 +19,7 @@ var (
 	purchaseRecordsFieldNames          = builder.RawFieldNames(&PurchaseRecords{})
 	purchaseRecordsRows                = strings.Join(purchaseRecordsFieldNames, ",")
 	purchaseRecordsRowsExpectAutoSet   = strings.Join(stringx.Remove(purchaseRecordsFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	purchaseRecordsRowsWithPlaceHolder = strings.Join(stringx.Remove(purchaseRecordsFieldNames, "`user_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	purchaseRecordsRowsWithPlaceHolder = strings.Join(stringx.Remove(purchaseRecordsFieldNames, "`purchase_record_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 )
 
 type (
@@ -40,18 +40,19 @@ type (
 	}
 
 	PurchaseRecords struct {
-		UserId           int64          `db:"user_id"`
-		PurchaseRecordId int64          `db:"purchase_record_id"`
-		CreatedAt        time.Time      `db:"created_at"`
-		UpdatedAt        sql.NullTime   `db:"updated_at"`
-		DeletedAt        sql.NullTime   `db:"deleted_at"`
-		GoodName         string         `db:"good_name"`
-		GoodPicture      sql.NullString `db:"good_picture"`
-		PurchaseWay      string         `db:"purchase_way"`
-		GoodQuantity     int64          `db:"good_quantity"`
-		PurchaseTime     time.Time      `db:"purchase_time"`
-		PurchasePrice    sql.NullFloat64  `db:"purchase_price"`
-		PaymentWay       string     	`db:"payment_way"`
+		UserId           int64           `db:"user_id"`
+		Id               int64           `db:"id"`
+		PurchaseRecordId int64           `db:"purchase_record_id"`
+		CreatedAt        time.Time       `db:"created_at"`
+		UpdatedAt        sql.NullTime    `db:"updated_at"`
+		DeletedAt        sql.NullTime    `db:"deleted_at"`
+		GoodName         string          `db:"good_name"`
+		GoodPicture      sql.NullString  `db:"good_picture"`
+		PurchaseWay      string          `db:"purchase_way"`
+		GoodQuantity     int64           `db:"good_quantity"`
+		PurchaseTime     time.Time       `db:"purchase_time"`
+		PurchasePrice    sql.NullFloat64 `db:"purchase_price"`
+		PaymentWay       string          `db:"payment_way"`
 	}
 )
 
@@ -62,16 +63,16 @@ func newPurchaseRecordsModel(conn sqlx.SqlConn) *defaultPurchaseRecordsModel {
 	}
 }
 
-func (m *defaultPurchaseRecordsModel) Delete(ctx context.Context, userId int64) error {
-	query := fmt.Sprintf("delete from %s where `user_id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, userId)
+func (m *defaultPurchaseRecordsModel) Delete(ctx context.Context, purchaseRecordId int64) error {
+	query := fmt.Sprintf("delete from %s where `purchase_record_id` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, purchaseRecordId)
 	return err
 }
 
-func (m *defaultPurchaseRecordsModel) FindOne(ctx context.Context, userId int64) (*PurchaseRecords, error) {
-	query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", purchaseRecordsRows, m.table)
+func (m *defaultPurchaseRecordsModel) FindOne(ctx context.Context, purchaseRecordId int64) (*PurchaseRecords, error) {
+	query := fmt.Sprintf("select %s from %s where `purchase_record_id` = ? limit 1", purchaseRecordsRows, m.table)
 	var resp PurchaseRecords
-	err := m.conn.QueryRowCtx(ctx, &resp, query, userId)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, purchaseRecordId)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -111,14 +112,14 @@ func (m *defaultPurchaseRecordsModel) FindOneByPurchaseRecordId(ctx context.Cont
 }
 
 func (m *defaultPurchaseRecordsModel) Insert(ctx context.Context, data *PurchaseRecords) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, purchaseRecordsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.PurchaseRecordId, data.DeletedAt, data.GoodName, data.GoodPicture, data.PurchaseWay, data.GoodQuantity, data.PurchaseTime, data.PurchasePrice, data.PaymentWay)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, purchaseRecordsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Id, data.PurchaseRecordId, data.DeletedAt, data.GoodName, data.GoodPicture, data.PurchaseWay, data.GoodQuantity, data.PurchaseTime, data.PurchasePrice, data.PaymentWay)
 	return ret, err
 }
 
 func (m *defaultPurchaseRecordsModel) Update(ctx context.Context, newData *PurchaseRecords) error {
-	query := fmt.Sprintf("update %s set %s where `user_id` = ?", m.table, purchaseRecordsRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.PurchaseRecordId, newData.DeletedAt, newData.GoodName, newData.GoodPicture, newData.PurchaseWay, newData.GoodQuantity, newData.PurchaseTime, newData.PurchasePrice, newData.PaymentWay, newData.UserId)
+	query := fmt.Sprintf("update %s set %s where `purchase_record_id` = ?", m.table, purchaseRecordsRowsWithPlaceHolder)
+	_, err := m.conn.ExecCtx(ctx, query, newData.UserId, newData.Id, newData.DeletedAt, newData.GoodName, newData.GoodPicture, newData.PurchaseWay, newData.GoodQuantity, newData.PurchaseTime, newData.PurchasePrice, newData.PaymentWay, newData.PurchaseRecordId)
 	return err
 }
 

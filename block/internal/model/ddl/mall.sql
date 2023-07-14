@@ -15,6 +15,7 @@ CREATE TABLE `manage_cryptominer` (
       `cryptominer_power` bigint(20) NOT NULL,          -- 矿机算力
       `payment_way` varchar(256) NOT NULL,              -- 支付方式 0：U 1：ADF
       `good_status` varchar(256) NOT NULL,              -- 商品状态 0：待上架  1：已上架 2：未上架
+      `good_type` varchar(256) NOT NULL ,               -- 道具类型 0：胡萝卜 1：能量水
       PRIMARY KEY (`cryptominer_typeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -32,6 +33,7 @@ CREATE TABLE `manage_prop` (
        `prop_price` int NOT NULL,
        `payment_way` varchar(256) NOT NULL ,             -- 支付方式 0：U 1：ADF
        `good_status` varchar(256) NOT NULL,              -- 商品状态 0：待上架  1：已上架 2：未上架
+       `good_type` varchar(256) NOT NULL ,               -- 道具类型 0：胡萝卜 1：能量水
        PRIMARY KEY (`prop_typeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -122,6 +124,21 @@ CREATE TABLE `purchase_records` (
         INDEX `idx_good_name` (`good_name`),
         INDEX `idx_good_picture` (`good_picture`),
         INDEX `idx_purchase_way` (`purchase_way`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- 支付账号.-- 支付单id
+-- `chain_purchase_account` varchar(256) NOT NULL,
+-- `chain_purchase_id` varchar(256) NOT NULL,
+
+-- 创建合约 config
+CREATE TABLE `chain_config` (
+        `id` int NOT NULL AUTO_INCREMENT,
+        `name` varchar(255) NOT NULL,
+        `chain_id` int NOT NULL,
+        `contract_ad_machine` varchar(255) NOT NULL,
+        `chain_block` varchar(255) NOT NULL,
+        `from_block` varchar(255) NOT NULL,
+        `update_date` datetime NOT NULL,
+        PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 创建 bargain 砍价表

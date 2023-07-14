@@ -48,6 +48,7 @@ func (l *CreatePropLogic) CreateProp(in *block.CreatePropRequest) (*block.IsSucc
 		PropPrice:    in.PropPrice,
 		PaymentWay:   in.PaymentWay,
 		GoodStatus:   "0", // 商品状态  0：待上架  1：已上架 2：未上架
+		GoodType:     "1", // 类型 0：矿机 1：能量水
 	}
 
 	_, err = l.svcCtx.ManagePropModel.Insert(l.ctx, createProp)

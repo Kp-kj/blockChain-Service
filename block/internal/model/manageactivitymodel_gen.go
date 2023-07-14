@@ -39,6 +39,7 @@ type (
 
 	ManageActivity struct {
 		ActivityId        int64        `db:"activity_id"`
+		Id                int64        `db:"id"`
 		CryptominerTypeid int64        `db:"cryptominer_typeid"`
 		CreatedAt         time.Time    `db:"created_at"`
 		UpdatedAt         sql.NullTime `db:"updated_at"`
@@ -80,14 +81,14 @@ func (m *defaultManageActivityModel) FindOne(ctx context.Context, activityId int
 }
 
 func (m *defaultManageActivityModel) Insert(ctx context.Context, data *ManageActivity) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageActivityRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.ActivityId, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, manageActivityRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.ActivityId, data.Id, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation)
 	return ret, err
 }
 
-func (m *defaultManageActivityModel) Update(ctx context.Context, data *ManageActivity) error {
+func (m *defaultManageActivityModel) Update(ctx context.Context, newData *ManageActivity) error {
 	query := fmt.Sprintf("update %s set %s where `activity_id` = ?", m.table, manageActivityRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.CryptominerTypeid, data.DeletedAt, data.AdminuserId, data.UserAmount, data.MinPrice, data.FirstBargainPer, data.FriendBargainPer, data.IsActivation, data.ActivityId)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Id, newData.CryptominerTypeid, newData.DeletedAt, newData.AdminuserId, newData.UserAmount, newData.MinPrice, newData.FirstBargainPer, newData.FriendBargainPer, newData.IsActivation, newData.ActivityId)
 	return err
 }
 

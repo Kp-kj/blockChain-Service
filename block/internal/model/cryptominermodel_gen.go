@@ -41,6 +41,7 @@ type (
 
 	Cryptominer struct {
 		CryptominerId        int64          `db:"cryptominer_id"`
+		Id                   int64          `db:"id"`
 		CreatedAt            time.Time      `db:"created_at"`
 		UpdatedAt            sql.NullTime   `db:"updated_at"`
 		DeletedAt            sql.NullTime   `db:"deleted_at"`
@@ -48,7 +49,7 @@ type (
 		CryptominerTypeid    int64          `db:"cryptominer_typeid"`
 		CryptominerName      string         `db:"cryptominer_name"`
 		CryptominerPicture   sql.NullString `db:"cryptominer_picture"`
-		CryptominerPrice     int64        `db:"cryptominer_price"`
+		CryptominerPrice     int64          `db:"cryptominer_price"`
 		PaymentWay           string         `db:"payment_way"`
 		CryptominerDescribe  sql.NullString `db:"cryptominer_describe"`
 		IsBargain            int64          `db:"is_bargain"`
@@ -90,15 +91,14 @@ func (m *defaultCryptominerModel) FindOne(ctx context.Context, cryptominerId int
 }
 
 func (m *defaultCryptominerModel) Insert(ctx context.Context, data *Cryptominer) (sql.Result, error) {
-	theRows := "`cryptominer_id`,`deleted_at`,`user_id`,`cryptominer_typeid`,`cryptominer_name`, `cryptominer_picture`, `cryptominer_price`, `payment_way`,`cryptominer_describe`, `is_bargain`, `cryptominer_duration`,`cryptominer_power`,`optional_status`"
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, theRows)
-	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerId, data.DeletedAt, data.UserId, data.CryptominerTypeid, data.CryptominerName, data.CryptominerPicture, data.CryptominerPrice, data.PaymentWay, data.CryptominerDescribe, data.IsBargain, data.CryptominerDuration, data.CryptominerPower,data.OptionalStatus)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, cryptominerRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CryptominerId, data.Id, data.DeletedAt, data.UserId, data.CryptominerTypeid, data.CryptominerName, data.CryptominerPicture, data.CryptominerPrice, data.PaymentWay, data.CryptominerDescribe, data.IsBargain, data.PurchaseWay, data.PurchaseTime, data.OptionalStatus, data.CryptominerStartTime, data.CryptominerEndTime, data.CryptominerDuration, data.CryptominerPower)
 	return ret, err
 }
 
-func (m *defaultCryptominerModel) Update(ctx context.Context, data *Cryptominer) error {
+func (m *defaultCryptominerModel) Update(ctx context.Context, newData *Cryptominer) error {
 	query := fmt.Sprintf("update %s set %s where `cryptominer_id` = ?", m.table, cryptominerRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.CryptominerTypeid, data.CryptominerName, data.CryptominerPicture, data.CryptominerPrice, data.PaymentWay, data.CryptominerDescribe, data.IsBargain, data.PurchaseWay, data.PurchaseTime, data.OptionalStatus, data.CryptominerStartTime, data.CryptominerEndTime, data.CryptominerDuration, data.CryptominerPower, data.CryptominerId)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Id, newData.DeletedAt, newData.UserId, newData.CryptominerTypeid, newData.CryptominerName, newData.CryptominerPicture, newData.CryptominerPrice, newData.PaymentWay, newData.CryptominerDescribe, newData.IsBargain, newData.PurchaseWay, newData.PurchaseTime, newData.OptionalStatus, newData.CryptominerStartTime, newData.CryptominerEndTime, newData.CryptominerDuration, newData.CryptominerPower, newData.CryptominerId)
 	return err
 }
 

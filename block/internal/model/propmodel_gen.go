@@ -45,10 +45,11 @@ type (
 
 	Prop struct {
 		PropId         int64          `db:"prop_id"`
+		Id             int64          `db:"id"`
 		CreatedAt      time.Time      `db:"created_at"`
 		UpdatedAt      sql.NullTime   `db:"updated_at"`
 		DeletedAt      sql.NullTime   `db:"deleted_at"`
-		UserId         int64  		  `db:"user_id"`
+		UserId         int64          `db:"user_id"`
 		PropTypeid     int64          `db:"prop_typeid"`
 		PropName       string         `db:"prop_name"`
 		PropPicture    sql.NullString `db:"prop_picture"`
@@ -88,16 +89,23 @@ func (m *defaultPropModel) FindOne(ctx context.Context, propId int64) (*Prop, er
 }
 
 func (m *defaultPropModel) Insert(ctx context.Context, data *Prop) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PropId, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PropId, data.Id, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus)
 	return ret, err
 }
+
+func (m *defaultPropModel) Update(ctx context.Context, newData *Prop) error {
+	query := fmt.Sprintf("update %s set %s where `prop_id` = ?", m.table, propRowsWithPlaceHolder)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Id, newData.DeletedAt, newData.UserId, newData.PropTypeid, newData.PropName, newData.PropPicture, newData.PropPrice, newData.PaymentWay, newData.PropDescribe, newData.PurchaseTime, newData.OptionalStatus, newData.PropId)
+	return err
+}
+
 func (m *defaultPropModel) InsertManyProp(ctx context.Context, data []*Prop) (sql.Result, error) {
 
-	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
+	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, propRowsExpectAutoSet)
 	var result sql.Result
 	for _, d := range data {
-		res, err := m.conn.ExecCtx(ctx,query, d.PropId, d.DeletedAt, d.UserId, d.PropTypeid, d.PropName, d.PropPicture, d.PropPrice, d.PaymentWay, d.PropDescribe, d.PurchaseTime, d.OptionalStatus)
+		res, err := m.conn.ExecCtx(ctx,query, d.PropId, d.Id, d.DeletedAt, d.UserId, d.PropTypeid, d.PropName, d.PropPicture, d.PropPrice, d.PaymentWay, d.PropDescribe, d.PurchaseTime, d.OptionalStatus)
 		if err != nil {
 			return nil, err
 		}
@@ -105,12 +113,6 @@ func (m *defaultPropModel) InsertManyProp(ctx context.Context, data []*Prop) (sq
 	}
 
 	return result, nil
-}
-
-func (m *defaultPropModel) Update(ctx context.Context, data *Prop) error {
-	query := fmt.Sprintf("update %s set %s where `prop_id` = ?", m.table, propRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.PropTypeid, data.PropName, data.PropPicture, data.PropPrice, data.PaymentWay, data.PropDescribe, data.PurchaseTime, data.OptionalStatus, data.PropId)
-	return err
 }
 
 func (m *defaultPropModel) FindOneByPropId(ctx context.Context, propId int64) (*Prop, error) {
