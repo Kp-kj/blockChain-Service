@@ -272,6 +272,100 @@ message JudgeGoodsPurchaseResponse {
   bool is_purchase = 1;         // 是否购买过
 }
 
+//商城区
+service Block {
+  // 管理后台接口
+  rpc Ping(Request) returns(Response);
+  rpc CreateCryptominer(CreateCryptominerRequest) returns(IsSuccessResponse); // 管理系统添加矿机
+  rpc CreateProp(CreatePropRequest) returns(IsSuccessResponse);               // 管理系统添加道具
+  rpc AdminGoodList(AdminGoodListRequest) returns(AdminGoodListResponse);     // 后台获取商品列表
+  rpc StartGood(StartGoodRequest) returns(IsSuccessResponse);                 // 管理系统上架商品
+  rpc CreateActivity(CreateActivityRequest) returns(IsSuccessResponse);       // 管理系统创建矿机活动
+  rpc AdminActivityList(AdminActivityListRequest) returns(AdminActivityListResponse);      // 后台获取活动列表
+  rpc StartActivity(StartActivityRequest) returns(IsSuccessResponse);         // 管理系统开启矿机活动
+  // 查询道具接口，删除，下架--和上架一个接口
+  // 查询活动接口
+
+  // PC接口
+  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse);                              // 获取商品列表
+  rpc GetPurchaseRecord(GetPurchaseRecordRequest) returns(GetPurchaseRecordResponse);               // 获取购买记录列表
+  rpc JudgeBargain(JudgeBargainRequest) returns(JudgeBargainResponse);                              // 判断砍价信息
+  rpc CryptominerFullPurchase(CryptominerPurchaseRequest) returns(IsSuccessResponse);               // 全额购买
+  rpc PropPurchase(PropPurchaseRequest) returns(IsSuccessResponse);                                 // 道具购买
+  rpc CryptominerBargainPurchase(CryptominerBargainRequest) returns(CryptominerBargainResponse);    // 发起砍价
+  rpc AssistorBargain(AssistorBargainRequest) returns(AssistorBargainResponse);                     // 好友助力
+  rpc GetBargainRecord(GetBargainRecordRequest) returns(GetBargainRecordResponse);                  // 获取砍价记录
+  rpc BargainPay(BargainPayRequest) returns(IsSuccessResponse);                                     // 砍价支付
+
+  // 外部rpc接口
+  rpc JudgeGoodsPurchase(JudgeGoodsPurchaseRequest) returns(JudgeGoodsPurchaseResponse);            // 任务--判断今日是否购买过
+
+  //-----------------------------------------------------------------------------------------------------------------
+
+  // 代币
+  rpc WalletShow(WalletShowRequest) returns(WalletShowResponse);      // 展示代币页面状态（代币与账单）
+  rpc WalletDivideAdfi(WalletDivideAdfiRequest) returns(IsSuccessResponse);      // 分币接口,定时任务
+  rpc WalletAdfiUpdate(WalletAdfiUpdateRequest) returns(IsSuccessResponse);      // 分币接口,定时任务
+
+  // 道具展示（已完成，api未做）
+  rpc GetUserCryptominerStatus(GetUserCryptominerStatusRequest) returns(GetUserCryptominerStatusResponse); // 钱包--获取矿机状态
+  rpc GetUserPropStatus(GetUserPropStatusRequest) returns(GetUserPropStatusResponse);                      // 钱包--获取道具状态
+  rpc ActivateCryptominer(ActivateCryptominerRequest) returns(ActivateCryptominerResponse);                //激活矿机
+
+  // 外部rpc接口
+  rpc WalletCurrent(WalletCurrentRequest) returns(IsSuccessResponse);      // 外部调用接口，为钱包增加流水
+}
+
+//钱包部分
+
+// 展示代币页面状态（代币与账单）
+message  WalletShowRequest{
+  int64  user_id = 1;            // 用户id
+}
+
+// 代币更新(年更新一次)
+message  WalletAdfiUpdateRequest{}
+
+// 展示代币页面状态（代币与账单）
+message  WalletShowResponse{
+  float holding_adfi = 1;         // 持仓ADFI
+  float accumulate_income = 2;    // 累计收益
+  float accumulate_expend = 3;    // 累计支出
+  float yesterday_income = 4;     // 累计收益
+  float yesterday_expend = 5;     // 累计支出
+  repeated YesterdayDetail YesterdayDetail =6; // 昨日账单
+  repeated BillDetail BillDetail =7; // 昨日账单
+}
+
+// 昨日账单
+message YesterdayDetail{
+  float adfi_quantity = 1;    // adfi数量
+  string bill_type =2;        // 账单类型 0:收益 1：支出 (0,1,2,3,4,5都是收益，6,7为支出)
+  string detail_type =3;      // 明细类型 0：平台任务(宝箱) 1：收到助力 2：帮助助力 3：矿机收益 4：策展任务收益 5：策展任务退回 6：购买能量水 7：发布策展预算 8：每日空投
+  string bill_time = 4;       // 账单时间 支出需要
+}
+
+// 账单明细 0:每日收益 1：平台空投 2：购买能量水 3：发布策展任务
+message BillDetail{
+  float adfi_quantity = 1;    // adfi数量
+  string bill_type =2;        // 账单类型 0:收益 1：支出 (YesterdayDetail中 0,1,2,3,4,5 加一起是每日收益，6,7,8 是123每笔单子的总量)
+  string detail_type =3;      // 明细类型 0:每日收益 1：平台空投 2：购买能量水 3：发布策展任务
+  string bill_time = 4;       // 账单时间 支出需要
+}
+
+// 外部调用接口，为钱包增加流水
+message  WalletCurrentRequest{
+  int64  user_id = 1;            // 用户id
+  float adfi_quantity = 2;    // adfi数量
+  string bill_type =3;        // 账单类型 0:收益 1：支出 (0,1,2,3,4,5都是收益，6,7为支出)
+  string detail_type =4;      // 明细类型 0：平台任务(宝箱) 1：收到助力 2：帮助助力 3：矿机收益 4：策展任务收益 5：策展任务退回 6：购买能量水 7：发布策展预算 8：每日空投
+}
+
+// 分币接口
+message  WalletDivideAdfiRequest{
+  int64  user_id = 1;            // 用户id
+}
+
 // 钱包--获取矿机状态
 message  GetUserCryptominerStatusRequest{
   int64  user_id = 1;            // 用户id
@@ -319,54 +413,6 @@ message  ActivateCryptominerResponse{
   bool is_success = 1;     // 成功
   bool prop_enough = 2;    // 能量水是否充足
 }
-
-
-//商城区
-service Block {
-  // 管理后台接口
-  rpc Ping(Request) returns(Response);
-  rpc CreateCryptominer(CreateCryptominerRequest) returns(IsSuccessResponse); // 管理系统添加矿机
-  rpc CreateProp(CreatePropRequest) returns(IsSuccessResponse);               // 管理系统添加道具
-  rpc AdminGoodList(AdminGoodListRequest) returns(AdminGoodListResponse);     // 后台获取商品列表
-  rpc StartGood(StartGoodRequest) returns(IsSuccessResponse);                 // 管理系统上架商品
-  rpc CreateActivity(CreateActivityRequest) returns(IsSuccessResponse);       // 管理系统创建矿机活动
-  rpc AdminActivityList(AdminActivityListRequest) returns(AdminActivityListResponse);      // 后台获取活动列表
-  rpc StartActivity(StartActivityRequest) returns(IsSuccessResponse);         // 管理系统开启矿机活动
-  // 查询道具接口
-  // 查询活动接口
-
-  // PC接口
-  rpc GetGoodsList(GetGoodsListRequest) returns(GetGoodsListResponse);                              // 获取商品列表
-  rpc GetPurchaseRecord(GetPurchaseRecordRequest) returns(GetPurchaseRecordResponse);               // 获取购买记录列表
-  rpc JudgeBargain(JudgeBargainRequest) returns(JudgeBargainResponse);                              // 判断砍价信息
-  rpc CryptominerFullPurchase(CryptominerPurchaseRequest) returns(IsSuccessResponse);               // 全额购买
-  rpc PropPurchase(PropPurchaseRequest) returns(IsSuccessResponse);                                 // 道具购买
-  rpc CryptominerBargainPurchase(CryptominerBargainRequest) returns(CryptominerBargainResponse);    // 发起砍价
-  rpc AssistorBargain(AssistorBargainRequest) returns(AssistorBargainResponse);                     // 好友助力
-  rpc GetBargainRecord(GetBargainRecordRequest) returns(GetBargainRecordResponse);                  // 获取砍价记录
-  rpc BargainPay(BargainPayRequest) returns(IsSuccessResponse);                                     // 砍价支付
-
-  // 外部rpc接口
-  rpc JudgeGoodsPurchase(JudgeGoodsPurchaseRequest) returns(JudgeGoodsPurchaseResponse);                          // 任务--判断今日是否购买过
-  rpc GetUserCryptominerStatus(GetUserCryptominerStatusRequest) returns(GetUserCryptominerStatusResponse);        // 钱包--获取矿机状态
-  rpc GetUserPropStatus(GetUserPropStatusRequest) returns(GetUserPropStatusResponse);                             // 钱包--获取道具状态
-  rpc ActivateCryptominer(ActivateCryptominerRequest) returns(ActivateCryptominerResponse);                       // 钱包--激活矿机
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

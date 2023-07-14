@@ -176,3 +176,43 @@ CREATE TABLE `friend_assistance` (
        PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 创建 wallet 钱包表
+CREATE TABLE `wallet` (
+       `user_id` bigint(20) NOT NULL,
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
+       `point_now` bigint(20) NOT NULL,             -- 现在积分(算力)
+       `holding_adfi` decimal(10,2) NOT NULL,       -- 持仓ADFI
+       PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 创建 bill_detail 账单明细表(可以查出昨日详细)
+CREATE TABLE `bill_detail` (
+        `user_id` bigint(20) NOT NULL,
+        `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
+        `bill_type` varchar(256) NOT NULL ,         -- 账单类型 0:收益 1：支出
+        `detail_type` varchar(256) NOT NULL ,       -- 明细类型 0：平台任务(宝箱) 1：收到助力 2：帮助助力 3：矿机收益 4：策展任务收益 5：策展任务退回 6：购买能量水 7：发布策展预算 8：每日空投
+        `adfi_quantity` decimal(10,2) NOT NULL,     -- adfi数量
+        `bill_date` datetime NOT NULL,              -- 账单时间
+        PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 创建 user_point 积分表
+CREATE TABLE `user_point` (
+       `user_id` bigint(20) NOT NULL,
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
+       `point_date` datetime NOT NULL,              -- 获得积分时间
+       `point_quantity` bigint(20) NOT NULL,        -- 获得积分数量
+       `income_type` decimal(10,2) NOT NULL,        -- 获取积分类型 0：平台任务(宝箱) 1：收到助力 2：帮助助力 3：矿机收益
+       `adfi_quantity` decimal(10,2) NOT NULL,      -- 分到adfi数量
+       PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 创建 adfi 代币表
+CREATE TABLE `adfi` (
+       `id` int NOT NULL AUTO_INCREMENT UNIQUE ,
+       `detail_type` varchar(256) NOT NULL ,        -- 明细类型
+       `adfi_total` decimal(10,2) NOT NULL,         -- adfi总量
+       `adfi_year_quantity` decimal(10,2) NOT NULL, -- adfi年发放量（第一年1亿，第二年为第一年的80%，年发放量为1亿*20%）
+       `adfi_day_quantity` datetime NOT NULL,       -- adfi日发放量（目前经济模型压缩为两种[买矿机和每日任务] 各占发放量的一半）
+       PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
